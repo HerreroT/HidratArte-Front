@@ -23,7 +23,26 @@ function Home() {
   return (
     <div className={`bg-light min-vh-100 d-flex flex-column ${showAgeModal ? "blur" : ""}`}>
       {/* ---------- NAVBAR ---------- */}
-      <nav className="navbar px-4 py-3" style={{ backgroundColor: "#0a3d3f" }}>
+    <nav className="navbar px-4 py-3" style={{ backgroundColor: "fafbfb" }}>
+        <div className="container-fluid d-flex align-items-center justify-content-between">
+          <Link to="/" className="navbar-brand d-flex align-items-center">
+            <img
+                src="/images/logo.png"
+                alt="HidratArte"
+                style={{ height: "65px", maxHeight: "65px", objectFit: "contain" }}
+              />
+
+          </Link>
+          <div className="d-flex gap-4">
+            <Link to="/explorar" className="nav-link fw-semibold" style={{ color: "#0a3d3f" }}>Explorar</Link>
+            <Link to="/" className="nav-link fw-semibold" style={{ color: "#0a3d3f" }}>Home</Link>
+            <Link to="/login" className="nav-link fw-semibold" style={{ color: "#0a3d3f" }}>Iniciar sesión</Link>
+          </div>
+        </div>
+    </nav>
+
+
+      {/* <nav className="navbar px-4 py-3" style={{ backgroundColor: "#0a3d3f" }}>
         <div className="container-fluid">
           <Link to="/" className="navbar-brand">
             <img src="/images/logo.png" alt="HidratArte" style={{ height: "50px" }} />
@@ -34,7 +53,7 @@ function Home() {
             <Link to="/login" className="nav-link text-white fw-semibold">Iniciar sesión</Link>
           </div>
         </div>
-      </nav>
+      </nav> */}
 
       {/* ---------- CONTENIDO ---------- */}
       <main className="flex-grow-1 text-center py-5 px-3">

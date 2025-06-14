@@ -5,13 +5,13 @@
   min-height: 100vh;
 }
 
-.navbar {
+/* .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
   background-color: transparent;
-}
+} */
 
 .logo {
   font-size: 26px;
@@ -129,3 +129,23 @@ nav a {
     margin: 0;
   }
 }
+.custom-link {
+  color: #1b4f4f !important;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  color: #05686c !important;
+}
+.nav-estilo {
+  color: #1b4f4f !important;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.nav-estilo:hover {
+  color: #05686c !important;
+  text-decoration: none;
+}
+

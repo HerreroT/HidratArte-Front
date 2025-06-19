@@ -5,80 +5,31 @@ import { AuthContext } from "../AuthContext";
 
 function Home() {
   const navigate = useNavigate();
-  const { isLoggedIn, userName, logout } = useContext(AuthContext); // ⬅️  Auth
-
+  const { isLoggedIn, userName, logout } = useContext(AuthContext);
   const [showAgeModal, setShowAgeModal] = useState(false);
 
-  // --- CATEGORÍAS COMUNES ---
   const categorias = [
     { nombre: "agua", ruta: "/agua" },
     { nombre: "jugo", ruta: "/jugo" },
     { nombre: "gaseosa", ruta: "/gaseosa" },
   ];
 
-  // --- HANDLERS ---
+  const redes = [
+    { nombre: "instagram", url: "https://www.instagram.com/tucuenta" },
+    { nombre: "facebook", url: "https://www.facebook.com/tucuenta" },
+    { nombre: "gmail", url: "mailto:tucorreo@gmail.com" },
+  ];
+
   const handleAlcoholClick = () => setShowAgeModal(true);
-  const handleAceptar18   = () => { setShowAgeModal(false); navigate("/alcohol"); };
-  const handleRechazar18  = () => setShowAgeModal(false);
+  const handleAceptar18 = () => {
+    setShowAgeModal(false);
+    navigate("/alcohol");
+  };
+  const handleRechazar18 = () => setShowAgeModal(false);
 
   return (
-    <div
-      className={`bg-light min-vh-100 d-flex flex-column ${
-        showAgeModal ? "blur" : ""
-      }`}
-    >
-      {/* ---------- NAVBAR ---------- */}
-      <nav className="navbar px-4 py-3" style={{ backgroundColor: "#fafbfb" }}>
-        <div className="container-fluid d-flex align-items-center justify-content-between">
-          <Link to="/" className="navbar-brand d-flex align-items-center">
-            <img
-              src="/images/logo.png"
-              alt="HidratArte"
-              style={{ height: "65px", objectFit: "contain" }}
-            />
-          </Link>
-
-          <div className="d-flex gap-4 align-items-center">
-            <Link
-              to="/explorar"
-              className="nav-link fw-semibold"
-              style={{ color: "#0a3d3f" }}
-            >
-              Explorar
-            </Link>
-            <Link
-              to="/"
-              className="nav-link fw-semibold"
-              style={{ color: "#0a3d3f" }}
-            >
-              Home
-            </Link>
-
-            {/* Login / Logout dinámico */}
-            {isLoggedIn ? (
-              <>
-                <span className="me-2 fw-semibold text-dark">Hola, {userName}</span>
-                <button
-                  onClick={logout}
-                  className="btn btn-outline-danger btn-sm fw-semibold"
-                >
-                Cerrar sesión
-                </button> 
-              </>
-            ) : (
-              <Link
-                to="/login"
-                className="nav-link fw-semibold"
-                style={{ color: "#0a3d3f" }}
-  >
-                Iniciar sesión
-              </Link>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      {/* ---------- CONTENIDO ---------- */}
+      <div className={`bg-light flex-grow-1 d-flex flex-column ${showAgeModal ? "blur" : ""}`}>
+      {/* ---------- CONTENIDO PRINCIPAL ---------- */}
       <main className="flex-grow-1 text-center py-5 px-3">
         <h2 className="fw-bold mb-2" style={{ color: "#0a3d3f" }}>
           BEBIDAS REFRESCANTES
@@ -106,10 +57,7 @@ function Home() {
                 alt={cat.nombre}
                 style={{ width: 90, height: 90, objectFit: "contain" }}
               />
-              <p
-                className="fw-semibold mt-2 text-capitalize"
-                style={{ color: "#0a3d3f" }}
-              >
+              <p className="fw-semibold mt-2 text-capitalize" style={{ color: "#0a3d3f" }}>
                 {cat.nombre}
               </p>
             </Link>
@@ -132,7 +80,7 @@ function Home() {
         </div>
       </main>
 
-      {/* ---------- FOOTER ---------- */}
+      {/* ---------- FOOTER ACTUALIZADO ---------- */}
       <footer
         className="text-white py-3 px-4 mt-auto"
         style={{ backgroundColor: "#0a3d3f" }}
@@ -142,11 +90,11 @@ function Home() {
             &copy; 2025 HidratArte. Todos los derechos reservados.
           </p>
           <div className="d-flex gap-3">
-            {["instagram", "facebook", "gmail"].map((icon) => (
-              <a key={icon} href="#">
+            {redes.map(({ nombre, url }) => (
+              <a key={nombre} href={url} target="_blank" rel="noreferrer">
                 <img
-                  src={`/icons/${icon}.png`}
-                  alt={icon}
+                  src={`/icons/${nombre}.png`}
+                  alt={nombre}
                   style={{ width: 24, filter: "brightness(0) invert(1)" }}
                 />
               </a>
@@ -161,10 +109,7 @@ function Home() {
           className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
           style={{ background: "rgba(0,0,0,0.5)", zIndex: 2000 }}
         >
-          <div
-            className="bg-white p-4 rounded shadow text-center"
-            style={{ maxWidth: 320 }}
-          >
+          <div className="bg-white p-4 rounded shadow text-center" style={{ maxWidth: 320 }}>
             <h5 className="mb-3">¿Eres mayor de 18 años?</h5>
             <div className="d-flex justify-content-center gap-3">
               <button onClick={handleAceptar18} className="btn btn-success">

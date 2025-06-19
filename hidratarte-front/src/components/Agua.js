@@ -1,7 +1,27 @@
-// import React from "react";
 import { Card, Button } from "react-bootstrap";
+import { useContext } from "react";
+import { CartContext } from "../CartContext";
 
 function Agua() {
+  const { addToCart } = useContext(CartContext);
+
+  const productos = [
+    {
+      id: 1,
+      nombre: "Agua Mineral Bonaqua",
+      descripcion: "Botella de 500ml - Sin gas",
+      precio: 150,
+      imagen: "/images/500.png"
+    },
+    {
+      id: 2,
+      nombre: "Agua Saborizada",
+      descripcion: "Botella 1L - Sabor limón",
+      precio: 180,
+      imagen: "/images/agua2.png"
+    }
+  ];
+
   return (
     <div className="container py-5">
       <h2 className="fw-bold mb-4 text-center" style={{ color: "#0a3d3f" }}>
@@ -12,29 +32,24 @@ function Agua() {
       </p>
 
       <div className="row">
-        {/* Producto 1 */}
-        <div className="col-md-4 mb-4">
-          <Card>
-            <Card.Img variant="top" src="/images/500.png" />
-            <Card.Body>
-              <Card.Title>Agua Mineral</Card.Title>
-              <Card.Text>Botella de 500ml - Sin gas</Card.Text>
-              <Button variant="primary">Agregar al carrito</Button>
-            </Card.Body>
-          </Card>
-        </div>
-
-        {/* Producto 2 */}
-        <div className="col-md-4 mb-4">
-          <Card>
-            <Card.Img variant="top" src="/images/agua2.png" />
-            <Card.Body>
-              <Card.Title>Agua Saborizada</Card.Title>
-              <Card.Text>Botella 1L - Sabor limón</Card.Text>
-              <Button variant="primary">Agregar al carrito</Button>
-            </Card.Body>
-          </Card>
-        </div>
+        {productos.map((producto) => (
+          <div className="col-md-4 mb-4" key={producto.id}>
+            <Card>
+              <Card.Img variant="top" src={producto.imagen} />
+              <Card.Body>
+                <Card.Title>{producto.nombre}</Card.Title>
+                <Card.Text>{producto.descripcion}</Card.Text>
+                <Card.Text className="fw-bold">${producto.precio}</Card.Text>
+                <Button
+                  variant="primary"
+                  onClick={() => addToCart(producto)}
+                >
+                  Agregar al carrito
+                </Button>
+              </Card.Body>
+            </Card>
+          </div>
+        ))}
       </div>
     </div>
   );

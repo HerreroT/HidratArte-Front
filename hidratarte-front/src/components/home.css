@@ -1,4 +1,28 @@
-.home-container {
+.categoria-icono {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.categoria-icono:hover {
+  transform: scale(1.12);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* .home-container {
   font-family: 'Segoe UI', sans-serif;
   background-color: #f0f8f6;
   color: #183d3d;
@@ -11,7 +35,7 @@
   align-items: center;
   padding: 20px 40px;
   background-color: transparent;
-} */
+} 
 
 .logo {
   font-size: 26px;
@@ -148,4 +172,4 @@ nav a {
   color: #05686c !important;
   text-decoration: none;
 }
-
+ */

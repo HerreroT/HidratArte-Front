@@ -1,17 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { CartProvider } from "./CartContext";
+import { AuthProvider } from "./AuthContext";
 import Home from "./components/home";
-import Login from "./components/Login";
-import Register from "./components/Register";
 import Agua from "./components/Agua";
 import Jugo from "./components/Jugo";
-import Alcohol from "./components/Alcohol";
 import Gaseosa from "./components/Gaseosa";
-import { AuthProvider } from "./AuthContext";
-import { CartProvider } from "./CartContext";
-import PrivateRoute from "./PrivateRoute";
-import Layout from "./Layout";
+import Alcohol from "./components/Alcohol";
 import Carrito from "./components/Carrito";
-
+import Register from "./components/Register";
+import Login from "./components/Login";
+import Explorar from "./components/Explorar";
+import Layout from "./Layout";
 
 function App() {
   return (
@@ -19,17 +18,20 @@ function App() {
       <CartProvider>
         <Router>
           <Routes>
+            {/* Envolvemos en Layout para tener navbar/footer en todas */}
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/agua" element={<PrivateRoute><Agua /></PrivateRoute>} />
-              <Route path="/jugo" element={<PrivateRoute><Jugo /></PrivateRoute>} />
-              <Route path="/gaseosa" element={<PrivateRoute><Gaseosa /></PrivateRoute>} />
-              <Route path="/alcohol" element={<PrivateRoute><Alcohol /></PrivateRoute>} />
+              <Route path="/agua" element={<Agua />} />
+              <Route path="/jugo" element={<Jugo />} />
+              <Route path="/gaseosa" element={<Gaseosa />} />
+              <Route path="/alcohol" element={<Alcohol />} />
               <Route path="/carrito" element={<Carrito />} />
-
+              <Route path="/explorar" element={<Explorar />} />
             </Route>
+
+            {/* Rutas fuera de Layout (si querés que no tengan navbar por ejemplo) */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </Router>
       </CartProvider>

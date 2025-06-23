@@ -1,16 +1,22 @@
+// src/App.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { CartProvider } from "./CartContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { AuthProvider } from "./AuthContext";
-import Home from "./components/home";
-import Agua from "./components/Agua";
-import Jugo from "./components/Jugo";
-import Gaseosa from "./components/Gaseosa";
-import Alcohol from "./components/Alcohol";
-import Carrito from "./components/Carrito";
-import Register from "./components/Register";
-import Login from "./components/Login";
+import { CartProvider } from "./CartContext";
+
+import Layout   from "./Layout";
+import Home     from "./components/home";
+import Agua     from "./components/Agua";
+import Jugo     from "./components/Jugo";
+import Gaseosa  from "./components/Gaseosa";
+import Alcohol  from "./components/Alcohol";
+import Carrito  from "./components/Carrito";
 import Explorar from "./components/Explorar";
-import Layout from "./Layout";
+import Perfil   from "./components/Perfil";
+import Login    from "./components/Login";
+import Register from "./components/Register";
 
 function App() {
   return (
@@ -18,22 +24,26 @@ function App() {
       <CartProvider>
         <Router>
           <Routes>
-            {/* Envolvemos en Layout para tener navbar/footer en todas */}
+            {/* --- Rutas con Navbar + Footer --- */}
             <Route element={<Layout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/agua" element={<Agua />} />
-              <Route path="/jugo" element={<Jugo />} />
-              <Route path="/gaseosa" element={<Gaseosa />} />
-              <Route path="/alcohol" element={<Alcohol />} />
-              <Route path="/carrito" element={<Carrito />} />
+              <Route path="/"         element={<Home />}     />
+              <Route path="/agua"     element={<Agua />}     />
+              <Route path="/jugo"     element={<Jugo />}     />
+              <Route path="/gaseosa"  element={<Gaseosa />}  />
+              <Route path="/alcohol"  element={<Alcohol />}  />
+              <Route path="/carrito"  element={<Carrito />}  />
               <Route path="/explorar" element={<Explorar />} />
+              <Route path="/perfil"   element={<Perfil />}   />
             </Route>
 
-            {/* Rutas fuera de Layout (si querés que no tengan navbar por ejemplo) */}
-            <Route path="/login" element={<Login />} />
+            {/* --- Rutas sin Navbar (ej: auth) --- */}
+            <Route path="/login"    element={<Login />}    />
             <Route path="/register" element={<Register />} />
           </Routes>
         </Router>
+
+        {/* Contenedor global de notificaciones */}
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       </CartProvider>
     </AuthProvider>
   );

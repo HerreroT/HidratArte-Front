@@ -53,7 +53,10 @@ function Navbar() {
           {/* Login / Logout */}
           {isLoggedIn ? (
             <>
-              <span className="fw-semibold text-dark">Hola, {userName}</span>
+            <Link to="/perfil" className="me-3 text-decoration-none fw-semibold" style={{ color: "#0a3d3f" }}>
+                      Hola, {userName}
+            </Link>
+
               <button
                 onClick={logout}
                 className="btn btn-outline-danger btn-sm fw-semibold"

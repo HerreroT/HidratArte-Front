@@ -18,6 +18,8 @@ import Perfil   from "./components/Perfil";
 import Login    from "./components/Login";
 import Register from "./components/Register";
 
+import PrivateRoute from "./PrivateRoute"; // ✅ Asegurate que esté correctamente ubicado
+
 function App() {
   return (
     <AuthProvider>
@@ -31,9 +33,19 @@ function App() {
               <Route path="/jugo"     element={<Jugo />}     />
               <Route path="/gaseosa"  element={<Gaseosa />}  />
               <Route path="/alcohol"  element={<Alcohol />}  />
-              <Route path="/carrito"  element={<Carrito />}  />
               <Route path="/explorar" element={<Explorar />} />
-              <Route path="/perfil"   element={<Perfil />}   />
+
+              {/* Rutas protegidas */}
+              <Route path="/carrito" element={
+                <PrivateRoute>
+                  <Carrito />
+                </PrivateRoute>
+              } />
+              <Route path="/perfil" element={
+                <PrivateRoute>
+                  <Perfil />
+                </PrivateRoute>
+              } />
             </Route>
 
             {/* --- Rutas sin Navbar (ej: auth) --- */}

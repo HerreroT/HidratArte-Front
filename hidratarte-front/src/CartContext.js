@@ -1,7 +1,7 @@
 // src/CartContext.js
 import { createContext, useState, useEffect } from "react";
-import { toast } from "react-toastify"; // ⬅️ Importamos la librería
-import "react-toastify/dist/ReactToastify.css"; // ⬅️ Importamos los estilos
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const CartContext = createContext();
 
@@ -11,12 +11,10 @@ export function CartProvider({ children }) {
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
-  // Guardamos el carrito en localStorage cada vez que cambia
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Función para agregar al carrito
   const addToCart = (product) => {
     setCartItems((prev) => {
       const itemExists = prev.find((item) => item.id === product.id);
@@ -30,7 +28,6 @@ export function CartProvider({ children }) {
       return [...prev, { ...product, quantity: 1 }];
     });
 
-    // Mostramos el toast
     toast.success(
       <div>
         <strong>Agregado al carrito</strong>
@@ -46,7 +43,6 @@ export function CartProvider({ children }) {
     );
   };
 
-  // Función para disminuir cantidad
   const decreaseFromCart = (id) => {
     setCartItems((prev) =>
       prev
@@ -57,14 +53,24 @@ export function CartProvider({ children }) {
     );
   };
 
-  // Función para eliminar un ítem directamente
   const removeItem = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem("carrito");
+  };
+
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, decreaseFromCart, removeItem }}
+      value={{
+        cartItems,
+        addToCart,
+        decreaseFromCart,
+        removeItem,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>

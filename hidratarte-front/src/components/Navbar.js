@@ -1,13 +1,14 @@
 // src/components/Navbar.js
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { CartContext } from "../CartContext";
 
 function Navbar() {
   const { isLoggedIn, userName, logout } = useContext(AuthContext);
-  const { cartItems } = useContext(CartContext);
+  const { cartItems, clearCart } = useContext(CartContext);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const navigate = useNavigate();
 
   return (
     <nav className="navbar px-4 py-3" style={{ backgroundColor: "#fafbfb" }}>
@@ -31,34 +32,54 @@ function Navbar() {
           </Link>
 
           {/* Ícono de Carrito */}
-          <Link to="/carrito" className="position-relative d-inline-block">
-            <img
-              src="/icons/carrito.png"
-              alt="Carrito"
-              style={{
-                width: 24,
-                height: 24,
-                objectFit: "contain",
-                filter: "brightness(0) invert(0.2)",
-                cursor: "pointer",
-              }}
-            />
-            {totalItems > 0 && (
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {totalItems}
-              </span>
-            )}
-          </Link>
+          {isLoggedIn ? (
+            <Link to="/carrito" className="position-relative d-inline-block">
+              <img
+                src="/icons/carrito.png"
+                alt="Carrito"
+                style={{
+                  width: 24,
+                  height: 24,
+                  objectFit: "contain",
+                  filter: "brightness(0) invert(0.2)",
+                  cursor: "pointer",
+                }}
+              />
+              {totalItems > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+          ) : (
+            <Link to="/login" className="nav-link">
+              <img
+                src="/icons/carrito.png"
+                alt="Carrito"
+                style={{
+                  width: 24,
+                  height: 24,
+                  objectFit: "contain",
+                  filter: "brightness(0) invert(0.2)",
+                  cursor: "pointer",
+                }}
+              />
+            </Link>
+          )}
 
           {/* Login / Logout */}
           {isLoggedIn ? (
             <>
-            <Link to="/perfil" className="me-3 text-decoration-none fw-semibold" style={{ color: "#0a3d3f" }}>
-                      Hola, {userName}
-            </Link>
+              <Link to="/perfil" className="me-3 text-decoration-none fw-semibold" style={{ color: "#0a3d3f" }}>
+                Hola, {userName}
+              </Link>
 
               <button
-                onClick={logout}
+                onClick={() => {
+                  logout();
+                  clearCart();
+                  navigate("/login");
+                }}
                 className="btn btn-outline-danger btn-sm fw-semibold"
               >
                 Cerrar sesión

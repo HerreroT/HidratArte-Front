@@ -5,7 +5,7 @@ import "./home.css"; // Asegurate de tener esto
 
 function Home() {
   const navigate = useNavigate();
-  const { isLoggedIn, userName, logout } = useContext(AuthContext);
+  const { userName } = useContext(AuthContext);
   const [showAgeModal, setShowAgeModal] = useState(false);
 
   const categorias = [

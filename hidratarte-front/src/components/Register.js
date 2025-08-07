@@ -1,26 +1,43 @@
-import React, { useState } from "react";
+// src/components/Register.js
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import API from "../axiosConfig";
+import { AuthContext } from "../AuthContext";
 
 function Register() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const res = await API.post("/useradmin/register/", {
+        username,
+        email,
+        address,
+        password,
+      });
 
-    const newUser = {
-      name,
-      email,
-      password,
-    };
+      const user = res.data;
 
-    localStorage.setItem("registeredUser", JSON.stringify(newUser));
-    alert("Usuario registrado exitosamente");
-    navigate("/login");
+      // Loguear automáticamente (si querés)
+      alert("Registro exitoso. Ahora podés iniciar sesión.");
+      navigate("/login");
+
+      // O si querés loguearlo directo:
+      // login(user);
+      // navigate("/");
+
+    } catch (error) {
+      console.error("Error en el registro:", error.response?.data || error);
+      alert("No se pudo registrar. Verificá los datos.");
+    }
   };
 
   return (
@@ -29,13 +46,13 @@ function Register() {
         <h3 className="text-center mb-4">Registrarse</h3>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="name" className="form-label">Nombre</label>
+            <label htmlFor="username" className="form-label">Nombre de usuario</label>
             <input
               type="text"
               className="form-control"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
@@ -48,6 +65,18 @@ function Register() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="address" className="form-label">Dirección</label>
+            <input
+              type="text"
+              className="form-control"
+              id="address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               required
             />
           </div>

@@ -15,9 +15,9 @@ function Home() {
   ];
 
   const redes = [
-    { nombre: "instagram", url: "https://www.instagram.com/tucuenta" },
+    { nombre: "instagram", url: "https://www.instagram.com/bajbuj_tomi" },
     { nombre: "facebook", url: "https://www.facebook.com/tucuenta" },
-    { nombre: "gmail", url: "mailto:tucorreo@gmail.com" },
+    { nombre: "gmail", url: "mailto:tomasbajbuj@gmail.com" },
   ];
 
   const handleAlcoholClick = () => setShowAgeModal(true);

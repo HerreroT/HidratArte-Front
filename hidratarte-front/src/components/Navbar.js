@@ -6,14 +6,24 @@ import { CartContext } from "../CartContext";
 
 function Navbar() {
   const { isLoggedIn, userName, logout } = useContext(AuthContext);
-  const { cartItems, clearCart } = useContext(CartContext);
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const { cartItems, invalidateCartState } = useContext(CartContext);
+  const totalItems = cartItems.reduce((sum, item) => sum + item.qty, 0);
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      invalidateCartState();
+    } catch (error) {
+      console.warn("No se pudo limpiar el estado local del carrito:", error);
+    } finally {
+      logout();
+      navigate("/login");
+    }
+  };
 
   return (
     <nav className="navbar px-4 py-3" style={{ backgroundColor: "#fafbfb" }}>
       <div className="container-fluid d-flex align-items-center justify-content-between">
-        {/* Logo HidratArte */}
         <Link to="/" className="navbar-brand d-flex align-items-center">
           <img
             src="/images/logo.png"
@@ -22,7 +32,6 @@ function Navbar() {
           />
         </Link>
 
-        {/* Navegación + Usuario */}
         <div className="d-flex gap-4 align-items-center">
           <Link to="/explorar" className="nav-link fw-semibold" style={{ color: "#0a3d3f" }}>
             Explorar
@@ -31,7 +40,6 @@ function Navbar() {
             Home
           </Link>
 
-          {/* Ícono de Carrito */}
           {isLoggedIn ? (
             <Link to="/carrito" className="position-relative d-inline-block">
               <img
@@ -67,19 +75,18 @@ function Navbar() {
             </Link>
           )}
 
-          {/* Login / Logout */}
           {isLoggedIn ? (
             <>
-              <Link to="/perfil" className="me-3 text-decoration-none fw-semibold" style={{ color: "#0a3d3f" }}>
+              <Link
+                to="/perfil"
+                className="me-3 text-decoration-none fw-semibold"
+                style={{ color: "#0a3d3f" }}
+              >
                 Hola, {userName}
               </Link>
 
               <button
-                onClick={() => {
-                  logout();
-                  clearCart();
-                  navigate("/login");
-                }}
+                onClick={handleLogout}
                 className="btn btn-outline-danger btn-sm fw-semibold"
               >
                 Cerrar sesión

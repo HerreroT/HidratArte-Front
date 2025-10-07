@@ -2,7 +2,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
-import API from "../axiosConfig";
 
 function Login() {
   const { login } = useContext(AuthContext);
@@ -15,33 +14,8 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // 1. Hacemos login para obtener el token
-      const resToken = await API.post(
-        "/useradmin/token/",
-        {
-          username: email,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-
-
-      const token = resToken.data.access;
-      localStorage.setItem("token", token);
-
-      // 2. Pedimos los datos del usuario logueado
-      const resUser = await API.get("/useradmin/profile/");
-      const user = resUser.data;
-
-      localStorage.setItem("registeredUser", JSON.stringify(user));
-      localStorage.setItem("isLoggedIn", "true");
-
-      login(user); // actualiza el contexto
+      // Usamos el login del contexto que maneja token, usuario y carrito
+      await login({ username: email, password });
       navigate("/");
     } catch (error) {
       console.error("Error al iniciar sesión:", error);

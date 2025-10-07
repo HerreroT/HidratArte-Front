@@ -2,64 +2,78 @@ import { useContext } from "react";
 import { CartContext } from "../CartContext";
 
 function Carrito() {
-  const { cartItems, addToCart, decreaseFromCart, removeItem } = useContext(CartContext);
+  const { cartItems, cartMeta, addToCart, decreaseFromCart, removeItem, clearCart } = useContext(CartContext);
 
+  // Los items vienen del backend como snapshot: { id, product_id, name, price, qty, image }
   const total = cartItems.reduce(
-    (sum, item) => sum + item.precio * item.quantity,
+    (sum, it) => sum + Number(it.price) * Number(it.qty),
     0
   );
-
   const envio = total > 10000 ? 0 : 1000;
+  const cartOwnerLabel = cartMeta.userId
+    ? `Carrito vinculado al usuario #${cartMeta.userId}`
+    : "Carrito local (sin iniciar sesión)";
+  const lastSynced = cartMeta.updatedAt ? new Date(cartMeta.updatedAt).toLocaleString() : null;
 
-  const handleRemove = (id, nombre) => {
-    const confirmar = window.confirm(`¿Deseás eliminar todos los "${nombre}" del carrito?`);
-    if (confirmar) {
-      removeItem(id);
-    }
+  const handleRemove = (it) => {
+    const ok = window.confirm(`¿Eliminar "${it.name}" del carrito?`);
+    if (ok) removeItem(it.product_id);
   };
 
   return (
     <div className="container py-5">
-      <h2 className="mb-4" style={{ color: "#0a3d3f" }}>
-        🛒 Tu carrito
-      </h2>
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <h2 style={{ color: "#0a3d3f" }}>🛒 Tu carrito</h2>
+        {cartItems.length > 0 && (
+          <button className="btn btn-outline-danger btn-sm" onClick={clearCart}>
+            Vaciar carrito
+          </button>
+        )}
+      </div>
+
+      <p className="text-muted small mb-4">
+        {cartOwnerLabel}
+        {lastSynced ? ` · Actualizado ${lastSynced}` : ""}
+      </p>
 
       {cartItems.length === 0 ? (
         <p className="text-muted">No hay productos en el carrito.</p>
       ) : (
         <div className="row">
-          {/* Productos */}
+          {/* Lista de productos */}
           <div className="col-md-8">
-            {cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="d-flex align-items-center border rounded p-3 mb-3 position-relative"
-              >
+            {cartItems.map((it) => (
+              <div key={it.id} className="d-flex align-items-center border rounded p-3 mb-3 position-relative">
                 <img
-                  src={item.imagen || "/images/default.png"}
-                  alt={item.nombre}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    objectFit: "cover",
-                    marginRight: "1rem",
-                  }}
+                  src={it.image || "/images/default.png"}
+                  alt={it.name}
+                  style={{ width: 80, height: 80, objectFit: "cover", marginRight: "1rem" }}
                 />
 
                 <div className="flex-grow-1">
-                  <h5 className="mb-1">{item.nombre}</h5>
-                  <p className="mb-1 text-muted">${item.precio} c/u</p>
+                  <h5 className="mb-1">{it.name}</h5>
+                  <p className="mb-1 text-muted">${Number(it.price).toFixed(2)} c/u</p>
+
                   <div className="d-flex align-items-center gap-2">
                     <button
                       className="btn btn-sm btn-outline-secondary"
-                      onClick={() => decreaseFromCart(item.id)}
+                      onClick={() => decreaseFromCart(it.product_id)}
                     >
                       -
                     </button>
-                    <span className="fw-bold">{item.quantity}</span>
+
+                    <span className="fw-bold">{it.qty}</span>
+
                     <button
                       className="btn btn-sm btn-outline-primary"
-                      onClick={() => addToCart(item)}
+                      onClick={() =>
+                        addToCart({
+                          id: it.product_id,
+                          nombre: it.name,
+                          precio: it.price,
+                          imagen: it.image,
+                        })
+                      }
                     >
                       +
                     </button>
@@ -67,14 +81,13 @@ function Carrito() {
                 </div>
 
                 <div className="text-end fw-bold me-3">
-                  ${item.precio * item.quantity}
+                  ${(Number(it.price) * Number(it.qty)).toFixed(2)}
                 </div>
 
-                {/* Papelera */}
                 <button
                   className="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2"
-                  onClick={() => handleRemove(item.id, item.nombre)}
-                  title="Eliminar todo"
+                  onClick={() => handleRemove(it)}
+                  title="Eliminar"
                 >
                   ❌
                 </button>

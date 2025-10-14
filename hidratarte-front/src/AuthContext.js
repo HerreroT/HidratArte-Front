@@ -1,4 +1,4 @@
-// src/AuthContext.js
+﻿// src/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
 import API from "./axiosConfig";
 
@@ -7,10 +7,12 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const persistSession = (user, accessToken) => {
     setIsLoggedIn(true);
     setUserName(user.username);
+    setIsAdmin(Boolean(user.is_staff));
     localStorage.setItem("registeredUser", JSON.stringify(user));
     localStorage.setItem("isLoggedIn", "true");
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
@@ -44,6 +46,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setIsLoggedIn(false);
     setUserName("");
+    setIsAdmin(false);
     delete API.defaults.headers.common.Authorization;
     localStorage.removeItem("token");
     localStorage.removeItem("refresh");
@@ -70,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userName, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, isAdmin, userName, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

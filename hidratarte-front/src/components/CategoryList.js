@@ -13,7 +13,7 @@ const mapApiProduct = (product) => ({
   raw: product,
 });
 
-function Agua() {
+function CategoryList({ category, title }) {
   const { addToCart } = useContext(CartContext);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,8 @@ function Agua() {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await API.get("/main/model/products/?category=agua");
+        // Podés filtrar por query param en backend o filtrar en front
+        const { data } = await API.get(`/main/model/products/?category=${category}`);
         if (!isMounted) return;
         const list = Array.isArray(data) ? data : data?.results ?? [];
         setProductos(list.map(mapApiProduct));
@@ -39,17 +40,15 @@ function Agua() {
       }
     };
     fetchProducts();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    return () => (isMounted = false);
+  }, [category]);
 
-  const mostrarProductos = useMemo(() => productos, [productos]);
+  const lista = useMemo(() => productos, [productos]);
 
   return (
     <div className="container py-5">
       <h2 className="fw-bold mb-4 text-center" style={{ color: "#0a3d3f" }}>
-        Bebidas de Agua
+        {title}
       </h2>
 
       {loading && (
@@ -66,12 +65,12 @@ function Agua() {
         </Alert>
       )}
 
-      {!loading && !error && mostrarProductos.length === 0 && (
+      {!loading && !error && lista.length === 0 && (
         <p className="text-center text-muted">No hay productos disponibles.</p>
       )}
 
       <div className="row">
-        {mostrarProductos.map((producto) => (
+        {lista.map((producto) => (
           <div className="col-md-4 mb-4" key={producto.id}>
             <Card>
               <Card.Img variant="top" src={producto.imagen} />
@@ -97,4 +96,4 @@ function Agua() {
   );
 }
 
-export default Agua;
+export default CategoryList;

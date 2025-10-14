@@ -1,11 +1,11 @@
-// src/components/Navbar.js
+﻿// src/components/Navbar.js
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { CartContext } from "../CartContext";
 
 function Navbar() {
-  const { isLoggedIn, userName, logout } = useContext(AuthContext);
+  const { isLoggedIn, isAdmin, userName, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const totalItems = cartItems.reduce((sum, item) => sum + (item.qty ?? 0), 0);
   const navigate = useNavigate();
@@ -33,6 +33,11 @@ function Navbar() {
           <Link to="/" className="nav-link fw-semibold" style={{ color: "#0a3d3f" }}>
             Home
           </Link>
+          {isAdmin && (
+            <Link to="/admin" className="nav-link fw-semibold" style={{ color: "#0a3d3f" }}>
+              Admin
+            </Link>
+          )}
 
           {isLoggedIn ? (
             <Link to="/carrito" className="position-relative d-inline-block">

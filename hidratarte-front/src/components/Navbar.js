@@ -6,19 +6,13 @@ import { CartContext } from "../CartContext";
 
 function Navbar() {
   const { isLoggedIn, userName, logout } = useContext(AuthContext);
-  const { cartItems, invalidateCartState } = useContext(CartContext);
-  const totalItems = cartItems.reduce((sum, item) => sum + item.qty, 0);
+  const { cartItems } = useContext(CartContext);
+  const totalItems = cartItems.reduce((sum, item) => sum + (item.qty ?? 0), 0);
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      invalidateCartState();
-    } catch (error) {
-      console.warn("No se pudo limpiar el estado local del carrito:", error);
-    } finally {
-      logout();
-      navigate("/login");
-    }
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (

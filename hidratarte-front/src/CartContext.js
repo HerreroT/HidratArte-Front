@@ -1,139 +1,157 @@
 // src/CartContext.js
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback, useContext } from "react";
 import API from "./axiosConfig";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthContext } from "./AuthContext";
 
 export const CartContext = createContext();
 
-const EMPTY_CART_META = Object.freeze({ id: null, userId: null, updatedAt: null });
-const toNullable = (value) => (value === undefined || value === null ? null : value);
+const REMOTE_ENDPOINT = "/main/model/user-product-records/";
+
+const mapRemoteRecord = (record) => {
+  const product = record?.product ?? {};
+  return {
+    id: record.id,
+    productId: product.id ?? record.product_id ?? null,
+    name: product.name ?? record.name ?? "Producto",
+    price: Number(product.price ?? record.price ?? 0),
+    qty: Number(record.quantity ?? 0),
+    image: product.image ?? record.image ?? "/images/default.png",
+    product,
+    raw: record,
+  };
+};
 
 export function CartProvider({ children }) {
+  const { isLoggedIn } = useContext(AuthContext);
   const [cartItems, setCartItems] = useState([]);
-  const [cartMeta, setCartMeta] = useState(EMPTY_CART_META);
-  const token = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const resetMeta = () => setCartMeta({ ...EMPTY_CART_META });
+  const loadCart = useCallback(async () => {
+    if (!isLoggedIn) {
+      setCartItems([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
 
-  const syncRemoteCart = (payload = {}) => {
-    setCartItems(payload.items || []);
-    setCartMeta({
-      id: toNullable(payload.id),
-      userId: toNullable(payload.user_id),
-      updatedAt: toNullable(payload.updated_at),
-    });
-  };
-
-  const invalidateCartState = () => {
-    setCartItems([]);
-    resetMeta();
-    localStorage.removeItem("cart");
-  };
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await API.get(REMOTE_ENDPOINT);
+      const records = Array.isArray(data) ? data : data?.results ?? [];
+      setCartItems(records.map(mapRemoteRecord));
+    } catch (err) {
+      console.error("No se pudo obtener el carrito", err);
+      setError("No se pudo obtener el carrito. Intenta nuevamente.");
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [isLoggedIn]);
 
   useEffect(() => {
-    if (token) {
-      API.get("/api/cart/")
-        .then((res) => syncRemoteCart(res.data))
-        .catch(() => {
-          invalidateCartState();
-        });
-    } else {
-      const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-      setCartItems(localCart);
-      resetMeta();
-    }
-  }, [token]);
+    loadCart();
+  }, [loadCart]);
 
-  useEffect(() => {
-    if (!token) {
-      localStorage.setItem("cart", JSON.stringify(cartItems));
+  const requireSession = () => {
+    if (!isLoggedIn) {
+      toast.info("Inicia sesión para usar el carrito");
+      return false;
     }
-  }, [cartItems, token]);
-
-  const refresh = async () => {
-    if (!token) return;
-    const { data } = await API.get("/api/cart/");
-    syncRemoteCart(data);
+    return true;
   };
 
   const addToCart = async (product) => {
-    if (token) {
-      await API.post("/api/cart/items/", {
-        product_id: product.id,
-        name: product.nombre,
-        price: product.precio,
-        qty: 1,
-        image: product.imagen || "",
+    if (!requireSession()) return;
+    const productId = product?.id ?? product?.product_id ?? product?.productId;
+    if (!productId) {
+      toast.error("No se pudo identificar el producto");
+      return;
+    }
+
+    const existing = cartItems.find((item) => item.productId === productId);
+    try {
+      if (existing) {
+        await API.patch(`${REMOTE_ENDPOINT}${existing.id}/`, {
+          quantity: existing.qty + 1,
+        });
+      } else {
+        await API.post(REMOTE_ENDPOINT, {
+          product_id: productId,
+          quantity: 1,
+        });
+      }
+      await loadCart();
+      toast.success(`Agregado: ${product.name ?? product.nombre ?? "Producto"}`, {
+        icon: "🛒",
       });
-      await refresh();
-    } else {
-      const exists = cartItems.find((i) => i.id === product.id);
-      if (exists) {
-        setCartItems(
-          cartItems.map((i) =>
-            i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-          )
-        );
-      } else {
-        setCartItems([...cartItems, { ...product, qty: 1 }]);
-      }
+    } catch (err) {
+      console.error("No se pudo agregar al carrito", err);
+      toast.error("No se pudo agregar al carrito");
     }
-    toast.success(`Agregado: ${product.nombre}`, { icon: "🛒" });
   };
 
-  const decreaseFromCart = async (productId) => {
-    if (token) {
-      const item = cartItems.find((i) => i.product_id === productId);
-      if (!item) return;
-      const nextQty = Number(item.qty) - 1;
+  const decreaseFromCart = async (recordId) => {
+    if (!requireSession()) return;
+    const record = cartItems.find((item) => item.id === recordId);
+    if (!record) return;
+    const nextQty = record.qty - 1;
+    try {
       if (nextQty <= 0) {
-        await API.delete(`/api/cart/items/${item.id}/`);
+        await API.delete(`${REMOTE_ENDPOINT}${record.id}/`);
       } else {
-        await API.patch(`/api/cart/items/${item.id}/`, { qty: nextQty });
+        await API.patch(`${REMOTE_ENDPOINT}${record.id}/`, {
+          quantity: nextQty,
+        });
       }
-      await refresh();
-    } else {
-      setCartItems(
-        cartItems
-          .map((i) => (i.id === productId ? { ...i, qty: i.qty - 1 } : i))
-          .filter((i) => i.qty > 0)
-      );
+      await loadCart();
+    } catch (err) {
+      console.error("No se pudo actualizar el carrito", err);
+      toast.error("No se pudo actualizar el carrito");
     }
   };
 
-  const removeItem = async (productId) => {
-    if (token) {
-      const item = cartItems.find((i) => i.product_id === productId);
-      if (!item) return;
-      await API.delete(`/api/cart/items/${item.id}/`);
-      await refresh();
-    } else {
-      setCartItems(cartItems.filter((item) => item.id !== productId));
+  const removeItem = async (recordId) => {
+    if (!requireSession()) return;
+    const record = cartItems.find((item) => item.id === recordId);
+    if (!record) return;
+    try {
+      await API.delete(`${REMOTE_ENDPOINT}${record.id}/`);
+      await loadCart();
+      toast.info("Producto eliminado del carrito 🗑️");
+    } catch (err) {
+      console.error("No se pudo eliminar el producto", err);
+      toast.error("No se pudo eliminar el producto");
     }
-    toast.info("Producto eliminado del carrito 🗑️");
   };
 
   const clearCart = async () => {
-    if (token) {
-      await API.post("/api/cart/clear/");
-      await refresh();
-    } else {
-      invalidateCartState();
+    if (!requireSession()) return;
+    try {
+      const ids = cartItems.map((item) => item.id);
+      await Promise.all(ids.map((id) => API.delete(`${REMOTE_ENDPOINT}${id}/`)));
+      await loadCart();
+    } catch (err) {
+      console.error("No se pudo vaciar el carrito", err);
+      toast.error("No se pudo vaciar el carrito");
     }
-    localStorage.removeItem("cart");
   };
 
   return (
     <CartContext.Provider
       value={{
         cartItems,
-        cartMeta,
+        loading,
+        error,
         addToCart,
         decreaseFromCart,
         removeItem,
         clearCart,
-        invalidateCartState,
+        reload: loadCart,
+        isLoggedIn,
       }}
     >
       {children}

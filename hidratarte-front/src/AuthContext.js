@@ -19,22 +19,24 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const { data } = await API.post("/useradmin/token/", credentials);
-      localStorage.setItem("token", data.access);
-      if (data.refresh) {
-        localStorage.setItem("refresh", data.refresh);
-      }
-      API.defaults.headers.common.Authorization = `Bearer ${data.access}`;
+      const accessToken = data.access;
+      const refreshToken = data.refresh ?? null;
+      API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-      const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-      if (localCart.length > 0) {
-        await API.post("/api/cart/merge/", { items: localCart });
-        localStorage.removeItem("cart");
+      localStorage.setItem("token", accessToken);
+      if (refreshToken) {
+        localStorage.setItem("refresh", refreshToken);
+      } else {
+        localStorage.removeItem("refresh");
       }
 
       const resUser = await API.get("/useradmin/profile/");
-      persistSession(resUser.data, data.access);
+      persistSession(resUser.data, accessToken);
     } catch (error) {
       console.error("Error en login:", error);
+      delete API.defaults.headers.common.Authorization;
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh");
       throw error;
     }
   };

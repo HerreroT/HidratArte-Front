@@ -1,4 +1,5 @@
-﻿import CategoryList from "../components/CategoryList";
+﻿import CategoryList from "./CategoryList";
+
 export default function Alcohol() {
-  return <CategoryList category="alcohol" title="Bebidas Alcohólicas" />;
+  return <CategoryList category="alcohol" title="Bebidas Alcohólicas 🔞" />;
 }

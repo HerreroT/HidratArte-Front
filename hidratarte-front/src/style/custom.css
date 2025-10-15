@@ -1,0 +1,532 @@
+/* ============================================
+   HIDRATARTE - CUSTOM STYLES
+   Paleta: #0a3d3f (principal), #00b3a1 (acento)
+   Tipografía: Poppins/Nunito
+   ============================================ */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+:root {
+  --color-primary: #0a3d3f;
+  --color-accent: #4db8a8;
+  --color-accent-light: #7eccc0;
+  --color-bg: #f9fbfc;
+  --color-white: #ffffff;
+  --color-text-dark: #2c3e50;
+  --color-text-light: #6c757d;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-dark);
+  line-height: 1.6;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+  border-radius: 25px;
+  padding: 10px 24px;
+  font-weight: 500;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+  color: var(--color-white);
+  box-shadow: 0 4px 10px rgba(77, 184, 168, 0.25);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #3da596, var(--color-accent));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(77, 184, 168, 0.35);
+}
+
+.btn-outline-primary {
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  background: transparent;
+}
+
+.btn-outline-primary:hover {
+  background: var(--color-accent);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-secondary:hover {
+  background-color: #083032;
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  overflow: hidden;
+  background-color: var(--color-white);
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.card-img-top {
+  height: 240px;
+  object-fit: cover;
+  border-bottom: 3px solid var(--color-accent);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-text {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-text.fw-bold {
+  color: var(--color-accent);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+.navbar {
+  background-color: var(--color-white) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  transition: var(--transition);
+}
+
+.navbar-brand img {
+  transition: var(--transition);
+}
+
+.navbar-brand img:hover {
+  transform: scale(1.05);
+}
+
+.nav-link {
+  color: var(--color-primary) !important;
+  font-weight: 500;
+  position: relative;
+  transition: var(--transition);
+  padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+  color: var(--color-accent) !important;
+  transform: translateY(-2px);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--color-accent);
+  transition: var(--transition);
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 80%;
+}
+
+/* ============================================
+   CATEGORY ICONS
+   ============================================ */
+.categoria-icono {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  transition: var(--transition);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.categoria-icono:hover {
+  transform: scale(1.15) rotate(5deg);
+  filter: drop-shadow(0 8px 16px rgba(77, 184, 168, 0.3));
+}
+
+.categoria-item {
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.categoria-item:hover {
+  background-color: rgba(77, 184, 168, 0.08);
+}
+
+.categoria-nombre {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 0.75rem;
+  text-transform: capitalize;
+  transition: var(--transition);
+}
+
+.categoria-item:hover .categoria-nombre {
+  color: var(--color-accent);
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.hero-section {
+  background: linear-gradient(135deg, rgba(77, 184, 168, 0.5) 0%, rgba(126, 204, 192, 0.3) 50%, rgba(255, 255, 255, 0.95) 100%);
+  padding: 4rem 2rem;
+  border-radius: 0 0 50px 50px;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.hero-title {
+  color: var(--color-primary);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.hero-subtitle {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+/* ============================================
+   SEARCH BAR
+   ============================================ */
+.search-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+.search-input {
+  border-radius: 50px;
+  border: 2px solid var(--color-accent);
+  padding: 14px 110px 14px 50px;
+  font-size: 1rem;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  width: 100%;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 20px rgba(77, 184, 168, 0.2);
+  transform: translateY(-2px);
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  pointer-events: none;
+}
+
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50px;
+  padding: 10px 24px;
+  pointer-events: auto;
+}
+
+.search-btn:hover {
+  transform: translateY(-50%);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 2rem 0;
+  margin-top: 4rem;
+}
+
+.footer p {
+  color: var(--color-white);
+  margin: 0;
+}
+
+.social-icon {
+  width: 28px;
+  height: 28px;
+  transition: var(--transition);
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.social-icon:hover {
+  transform: scale(1.2) rotate(10deg);
+  opacity: 1;
+}
+
+/* ============================================
+   CART BADGE
+   ============================================ */
+.cart-icon {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) saturate(100%) invert(15%) sepia(20%) saturate(2000%) hue-rotate(140deg);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.cart-icon:hover {
+  transform: scale(1.15);
+  filter: brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(2000%) hue-rotate(150deg);
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 50%;
+}
+
+/* ============================================
+   MODAL
+   ============================================ */
+.modal-overlay {
+  background-color: rgba(10, 61, 63, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  border-radius: var(--border-radius);
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  border-bottom: 2px solid var(--color-accent);
+  background: linear-gradient(135deg, rgba(77, 184, 168, 0.1), transparent);
+}
+
+.modal-title {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+/* ============================================
+   SPINNERS AND LOADING
+   ============================================ */
+.spinner-border {
+  color: var(--color-accent);
+  width: 3rem;
+  height: 3rem;
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+.alert {
+  border-radius: var(--border-radius);
+  border: none;
+  box-shadow: var(--box-shadow);
+}
+
+.alert-danger {
+  background-color: #ffe6e6;
+  color: #d32f2f;
+}
+
+.alert-success {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.alert-info {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+/* ============================================
+   INPUTS
+   ============================================ */
+.form-control {
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  padding: 12px 16px;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 0.2rem rgba(77, 184, 168, 0.15);
+  outline: none;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.text-primary-custom {
+  color: var(--color-primary) !important;
+}
+
+.text-accent-custom {
+  color: var(--color-accent) !important;
+}
+
+.bg-primary-custom {
+  background-color: var(--color-primary) !important;
+}
+
+.bg-accent-custom {
+  background-color: var(--color-accent) !important;
+}
+
+.shadow-soft {
+  box-shadow: var(--box-shadow);
+}
+
+.shadow-soft-hover:hover {
+  box-shadow: var(--box-shadow-hover);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .categoria-icono {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+  
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-top {
+  animation: slideInFromTop 0.4s ease-out;
+}

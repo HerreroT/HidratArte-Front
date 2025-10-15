@@ -1,12 +1,74 @@
-.categoria-icono {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  transition: transform 0.3s ease;
+/* Buscador */
+.home-search-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.home-search {
+  display: flex;
+  align-items: center;
+  gap: .5rem;            /* separa input y botón */
+}
+.home-search .form-control {
+  border-radius: 999px;  /* pill */
+  padding-left: 2.5rem;  /* deja aire para el ícono */
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.home-search .btn {
+  border-radius: 999px;  /* pill */
+  padding: .55rem 1rem;
 }
 
-.categoria-icono:hover {
-  transform: scale(1.12);
+/* Ícono lupa (posicionado dentro del input) */
+.home-search-icon {
+  position: absolute;
+  left: .85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: .55;
+}
+
+/* Categorías (unificadas) */
+.categorias-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.categoria-item {
+  width: 140px;
+  text-decoration: none;
+  color: #0a3d3f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.categoria-fig {               /* fija la altura de la "caja de imagen" */
+  height: 90px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;       /* alinea por la línea de base */
+  justify-content: center;
+}
+
+.categoria-icono {
+  height: 72px;
+  transition: transform .18s ease;
+}
+.categoria-item:hover .categoria-icono {
+  transform: translateY(-4px);
+}
+
+.categoria-label {
+  font-weight: 600;
+  margin-top: .4rem;
+}
+
+/* (opcional) título principal */
+.home-title {
+  color: #0a3d3f;
 }
 
 

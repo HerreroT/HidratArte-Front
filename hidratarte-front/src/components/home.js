@@ -1,26 +1,13 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
-import "./home.css"; // Asegurate de tener esto
+import "./home.css";
 
 function Home() {
   const navigate = useNavigate();
   const { userName } = useContext(AuthContext);
   const [showAgeModal, setShowAgeModal] = useState(false);
 
-  const categorias = [
-    { nombre: "agua", ruta: "/agua" },
-    { nombre: "jugo", ruta: "/jugo" },
-    { nombre: "gaseosa", ruta: "/gaseosa" },
-  ];
-
-  const redes = [
-    { nombre: "instagram", url: "https://www.instagram.com/bajbuj_tomi" },
-    { nombre: "facebook", url: "https://www.facebook.com/tucuenta" },
-    { nombre: "gmail", url: "mailto:tomasbajbuj@gmail.com" },
-  ];
-
-  const handleAlcoholClick = () => setShowAgeModal(true);
   const handleAceptar18 = () => {
     setShowAgeModal(false);
     navigate("/alcohol");
@@ -28,105 +15,164 @@ function Home() {
   const handleRechazar18 = () => setShowAgeModal(false);
 
   return (
-    <div className={`bg-light ${showAgeModal ? "blur" : ""}`}>
-      {/* CONTENIDO */}
-      <main className="container text-center py-5 mb-5">
-        <h2 className="fw-bold mb-3" style={{ color: "#0a3d3f" }}>
-          BEBIDAS REFRESCANTES
-        </h2>
-        <p className="text-muted mb-4">
-          Descubre tus bebidas favoritas para mantenerte hidratado.
-        </p>
-
-        <div className="position-relative w-50 mx-auto mb-5">
-          <input
-            type="text"
-            className="form-control rounded-pill ps-5"
-            placeholder="🔍 Buscar productos"
-          />
-        </div>
-
-        <div className="d-flex flex-wrap justify-content-center gap-4">
-          {categorias.map((cat) => (
-            <Link
-              key={cat.nombre}
-              to={cat.ruta}
-              className="text-center text-decoration-none"
-            >
-              <img
-                src={`/images/${cat.nombre}.png`}
-                alt={cat.nombre}
-                className="categoria-icono"
-              />
-              <p
-                className="fw-semibold mt-2 text-capitalize"
-                style={{ color: "#0a3d3f" }}
-              >
-                {cat.nombre}
-              </p>
-            </Link>
-          ))}
-
-          <button
-            onClick={handleAlcoholClick}
-            className="border-0 bg-transparent p-0 text-center"
-          >
-            <img
-              src="/images/alcohol.png"
-              alt="Alcohol"
-              className="categoria-icono"
-            />
-            <p className="fw-semibold mt-2" style={{ color: "#0a3d3f" }}>
-              Alcohol
-            </p>
-          </button>
-        </div>
-      </main>
-
-      {/* FOOTER FIJO */}
-      <footer
-        className="text-white py-3 px-4 w-100 position-fixed bottom-0 start-0"
-        style={{ backgroundColor: "#0a3d3f", zIndex: 1000 }}
-      >
-        <div className="container d-flex justify-content-between align-items-center flex-wrap">
-          <p className="mb-2 mb-md-0">
-            &copy; 2025 HidratArte. Todos los derechos reservados.
+    <div style={{ backgroundColor: "#f9fbfc", minHeight: "calc(100vh - 200px)" }}>
+      {/* HERO SECTION */}
+      <section className="hero-section fade-in">
+        <div className="container">
+          <h1 className="hero-title">
+            🌊 Bienvenido a HidratArte {userName && `, ${userName}`}
+          </h1>
+          <p className="hero-subtitle">
+            Descubre las mejores bebidas refrescantes para mantenerte hidratado y lleno de energía
           </p>
-          <div className="d-flex gap-3">
-            {redes.map(({ nombre, url }) => (
-              <a key={nombre} href={url} target="_blank" rel="noreferrer">
-                <img
-                  src={`/icons/${nombre}.png`}
-                  alt={nombre}
-                  style={{ width: 24, filter: "brightness(0) invert(1)" }}
-                />
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
 
-      {/* MODAL 18+ */}
-      {showAgeModal && (
-        <div
-          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-          style={{ background: "rgba(0,0,0,0.5)", zIndex: 2000 }}
-        >
-          <div
-            className="bg-white p-4 rounded shadow text-center"
-            style={{ maxWidth: 320 }}
-          >
-            <h5 className="mb-3">¿Eres mayor de 18 años?</h5>
-            <div className="d-flex justify-content-center gap-3">
-              <button onClick={handleAceptar18} className="btn btn-success">
-                Sí
-              </button>
-              <button onClick={handleRechazar18} className="btn btn-danger">
-                No
+          {/* BUSCADOR */}
+          <div className="home-search-wrap position-relative mb-5">
+            <div className="home-search position-relative">
+              <span className="home-search-icon">🔍</span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar productos"
+              />
+              <button className="btn btn-primary" type="button">
+                Buscar
               </button>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* CATEGORÍAS SECTION */}
+      <section className="container py-5">
+        <h2 className="text-center fw-bold mb-2 home-title">
+          Explora Nuestras Categorías
+        </h2>
+        <p className="text-center mb-5" style={{ color: "#6c757d" }}>
+          Selecciona tu categoría favorita y encuentra la bebida perfecta
+        </p>
+
+        {/* CATEGORÍAS */}
+        <div className="categorias-wrap">
+          {/* Agua */}
+          <Link to="/agua" className="categoria-item" aria-label="Agua">
+            <div className="categoria-fig">
+              <img src="/images/agua.png" alt="Agua" className="categoria-icono" />
+            </div>
+            <div className="categoria-label">Agua</div>
+          </Link>
+
+          {/* Jugo */}
+          <Link to="/jugo" className="categoria-item" aria-label="Jugo">
+            <div className="categoria-fig">
+              <img src="/images/jugo.png" alt="Jugo" className="categoria-icono" />
+            </div>
+            <div className="categoria-label">Jugo</div>
+          </Link>
+
+          {/* Gaseosa */}
+          <Link to="/gaseosa" className="categoria-item" aria-label="Gaseosa">
+            <div className="categoria-fig">
+              <img src="/images/gaseosa.png" alt="Gaseosa" className="categoria-icono" />
+            </div>
+            <div className="categoria-label">Gaseosa</div>
+          </Link>
+
+          {/* Alcohol: MISMO MARKUP + interceptar click para modal 18+ */}
+          <a
+            href="/alcohol"
+            className="categoria-item"
+            aria-label="Alcohol"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowAgeModal(true);
+            }}
+          >
+            <div className="categoria-fig">
+              <img src="/images/alcohol.png" alt="Alcohol" className="categoria-icono" />
+            </div>
+            <div className="categoria-label">Alcohol</div>
+          </a>
+        </div>
+      </section>
+
+      {/* SECCIÓN DE CARACTERÍSTICAS */}
+      <section className="container py-5 mb-5">
+        <div className="row g-4">
+          <div className="col-md-4 text-center fade-in">
+            <div className="p-4 rounded shadow-soft bg-white">
+              <div className="mb-3" style={{ fontSize: "3rem" }}>💧</div>
+              <h5 style={{ color: "#0a3d3f" }}>Frescura Garantizada</h5>
+              <p style={{ color: "#6c757d", fontSize: "0.95rem" }}>
+                Productos seleccionados con los más altos estándares de calidad
+              </p>
+            </div>
+          </div>
+          <div className="col-md-4 text-center fade-in">
+            <div className="p-4 rounded shadow-soft bg-white">
+              <div className="mb-3" style={{ fontSize: "3rem" }}>🚚</div>
+              <h5 style={{ color: "#0a3d3f" }}>Entrega Rápida</h5>
+              <p style={{ color: "#6c757d", fontSize: "0.95rem" }}>
+                Recibe tus bebidas favoritas en la puerta de tu casa
+              </p>
+            </div>
+          </div>
+          <div className="col-md-4 text-center fade-in">
+            <div className="p-4 rounded shadow-soft bg-white">
+              <div className="mb-3" style={{ fontSize: "3rem" }}>🎯</div>
+              <h5 style={{ color: "#0a3d3f" }}>Variedad Única</h5>
+              <p style={{ color: "#6c757d", fontSize: "0.95rem" }}>
+                Amplia selección de bebidas para todos los gustos
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MODAL DE VERIFICACIÓN DE EDAD 18+ */}
+      {showAgeModal && (
+        <>
+          <div
+            className="modal-overlay position-fixed top-0 start-0 w-100 h-100"
+            style={{ zIndex: 1050 }}
+            onClick={handleRechazar18}
+          ></div>
+          <div
+            className="position-fixed top-50 start-50 translate-middle"
+            style={{ zIndex: 1051, width: "90%", maxWidth: "400px" }}
+          >
+            <div className="modal-content bg-white rounded shadow-lg p-4">
+              <div className="modal-header border-0 pb-3 flex-column">
+                <div className="mb-3" style={{ fontSize: "3rem" }}>🔞</div>
+                <h4 className="modal-title text-center mb-2" style={{ color: "#0a3d3f" }}>
+                  Verificación de Edad
+                </h4>
+                <p className="text-center mb-0" style={{ color: "#6c757d", fontSize: "0.95rem" }}>
+                  Para acceder a esta sección, debes ser mayor de 18 años
+                </p>
+              </div>
+              <div className="modal-body text-center pt-3">
+                <p className="mb-4 fw-semibold" style={{ color: "#0a3d3f" }}>
+                  ¿Eres mayor de 18 años?
+                </p>
+                <div className="d-flex gap-3 justify-content-center">
+                  <button
+                    onClick={handleAceptar18}
+                    className="btn btn-primary px-4"
+                  >
+                    Sí, soy mayor
+                  </button>
+                  <button
+                    onClick={handleRechazar18}
+                    className="btn btn-secondary px-4"
+                  >
+                    No, volver
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

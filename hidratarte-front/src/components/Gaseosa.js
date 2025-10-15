@@ -1,4 +1,5 @@
-﻿import CategoryList from "../components/CategoryList";
+﻿import CategoryList from "./CategoryList";
+
 export default function Gaseosa() {
-  return <CategoryList category="gaseosa" title="Gaseosas" />;
+  return <CategoryList category="gaseosa" title="Gaseosas y Refrescos" />;
 }

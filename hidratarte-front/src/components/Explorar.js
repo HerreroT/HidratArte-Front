@@ -1,34 +1,148 @@
-import { Card, Button } from "react-bootstrap";
-import { useContext } from "react";
+import { useState, useEffect, useContext } from "react";
+import { Spinner, Alert } from "react-bootstrap";
+import API from "../axiosConfig";
 import { CartContext } from "../CartContext";
-import { todosLosProductos } from "../data/productos";
+import "../style/custom.css";
+
+const mapApiProduct = (product) => ({
+  id: product.id,
+  nombre: product.name,
+  descripcion: product.description || "",
+  precio: Number(product.price ?? 0),
+  imagen: product.image || "/images/default.png",
+  categoria: product.category ?? null,
+  raw: product,
+});
 
 function Explorar() {
   const { addToCart } = useContext(CartContext);
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchAllProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data } = await API.get("/main/model/products/");
+        if (!isMounted) return;
+        const list = Array.isArray(data) ? data : data?.results ?? [];
+        setProductos(list.map(mapApiProduct));
+      } catch (err) {
+        if (!isMounted) return;
+        console.error("No se pudieron cargar los productos", err);
+        setError("No se pudieron cargar los productos. Intenta nuevamente.");
+        setProductos([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    fetchAllProducts();
+    return () => (isMounted = false);
+  }, []);
 
   return (
-    <div className="container py-5">
-      <h2 className="fw-bold mb-4 text-center" style={{ color: "#0a3d3f" }}>
-        Explorá todas nuestras bebidas
-      </h2>
-      <p className="text-muted text-center mb-5">
-        Catálogo completo disponible en HidratArte.
-      </p>
+    <div className="container py-5" style={{ minHeight: "calc(100vh - 400px)" }}>
+      <div className="text-center mb-5 slide-in-top">
+        <h2 className="fw-bold mb-3" style={{ color: "#0a3d3f", fontSize: "2.5rem" }}>
+          Explorá todas nuestras bebidas
+        </h2>
+        <div
+          style={{
+            width: "80px",
+            height: "4px",
+            background: "linear-gradient(90deg, #4db8a8, #0a3d3f)",
+            margin: "0 auto 1rem",
+            borderRadius: "2px",
+          }}
+        ></div>
+        <p style={{ color: "#6c757d" }}>
+          Catálogo completo de bebidas disponibles en HidratArte
+        </p>
+      </div>
 
-      <div className="row">
-        {todosLosProductos.map((p) => (
-          <div className="col-sm-6 col-md-4 col-lg-3 mb-4" key={p.id}>
-            <Card className="h-100">
-              <Card.Img variant="top" src={p.imagen} style={{ height: 160, objectFit: "cover" }} />
-              <Card.Body className="d-flex flex-column">
-                <Card.Title style={{ fontSize: 16 }}>{p.nombre}</Card.Title>
-                <Card.Text style={{ flexGrow: 1 }}>{p.descripcion}</Card.Text>
-                <Card.Text className="fw-bold mb-3">${p.precio}</Card.Text>
-                <Button variant="primary" onClick={() => addToCart(p)}>
-                  Agregar al carrito
-                </Button>
-              </Card.Body>
-            </Card>
+      {/* Estado de carga */}
+      {loading && (
+        <div className="d-flex flex-column justify-content-center align-items-center my-5 py-5">
+          <Spinner animation="border" role="status" style={{ width: "3rem", height: "3rem", color: "#4db8a8" }}>
+            <span className="visually-hidden">Cargando...</span>
+          </Spinner>
+          <p className="mt-3" style={{ color: "#6c757d" }}>
+            Cargando productos...
+          </p>
+        </div>
+      )}
+
+      {/* Estado de error */}
+      {!loading && error && (
+        <Alert variant="danger" className="text-center shadow-soft fade-in">
+          <strong>⚠️ Error:</strong> {error}
+        </Alert>
+      )}
+
+      {/* Sin productos */}
+      {!loading && !error && productos.length === 0 && (
+        <div className="text-center py-5 fade-in">
+          <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>📦</div>
+          <h4 style={{ color: "#0a3d3f" }}>No hay productos disponibles</h4>
+          <p style={{ color: "#6c757d" }}>
+            Vuelve pronto para ver nuevos productos
+          </p>
+        </div>
+      )}
+
+      {/* Grid de productos */}
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        {productos.map((producto) => (
+          <div className="col" key={producto.id}>
+            <div className="card h-100 fade-in">
+              {/* Imagen del producto */}
+              <div style={{ position: "relative", overflow: "hidden" }}>
+                <img
+                  src={producto.imagen}
+                  alt={producto.nombre}
+                  className="card-img-top"
+                  style={{ transition: "transform 0.3s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                />
+              </div>
+
+              {/* Cuerpo de la card */}
+              <div className="card-body d-flex flex-column">
+                <h5 className="card-title">{producto.nombre}</h5>
+                <p className="card-text flex-grow-1" style={{ fontSize: "0.9rem" }}>
+                  {producto.descripcion || "Producto de alta calidad"}
+                </p>
+                
+                {/* Categoría badge */}
+                <span 
+                  className="badge mb-2 align-self-start"
+                  style={{ 
+                    backgroundColor: "#4db8a8",
+                    textTransform: "capitalize"
+                  }}
+                >
+                  {producto.categoria}
+                </span>
+                
+                {/* Precio y botón */}
+                <div className="mt-auto">
+                  <p className="card-text fw-bold mb-3" style={{ fontSize: "1.4rem" }}>
+                    ${producto.precio.toFixed(2)}
+                  </p>
+                  <button
+                    className="btn btn-primary w-100"
+                    onClick={() => addToCart(producto)}
+                    disabled={!producto.id}
+                  >
+                    🛒 Agregar al carrito
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         ))}
       </div>

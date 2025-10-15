@@ -9,7 +9,7 @@ const mapApiProduct = (product) => ({
   nombre: product.name,
   descripcion: product.description || "",
   precio: Number(product.price ?? 0),
-  imagen: "/images/default.png",
+  imagen: product.image || "/images/default.png",
   categoria: product.category ?? null,
   raw: product,
 });

@@ -1,13 +1,20 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
-import "./home.css";
+import "../style/custom.css";
 
 function Home() {
   const navigate = useNavigate();
   const { userName } = useContext(AuthContext);
   const [showAgeModal, setShowAgeModal] = useState(false);
 
+  const categorias = [
+    { nombre: "agua", ruta: "/agua" },
+    { nombre: "jugo", ruta: "/jugo" },
+    { nombre: "gaseosa", ruta: "/gaseosa" },
+  ];
+
+  const handleAlcoholClick = () => setShowAgeModal(true);
   const handleAceptar18 = () => {
     setShowAgeModal(false);
     navigate("/alcohol");
@@ -26,73 +33,70 @@ function Home() {
             Descubre las mejores bebidas refrescantes para mantenerte hidratado y lleno de energía
           </p>
 
-          {/* BUSCADOR */}
-          <div className="home-search-wrap position-relative mb-5">
-            <div className="home-search position-relative">
-              <span className="home-search-icon">🔍</span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Buscar productos"
-              />
-              <button className="btn btn-primary" type="button">
-                Buscar
-              </button>
-            </div>
+          {/* SEARCH BAR */}
+          <div className="search-container">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Buscar bebidas, marcas o categorías..."
+            />
+            <button className="btn btn-primary search-btn">
+              Buscar
+            </button>
           </div>
         </div>
       </section>
 
       {/* CATEGORÍAS SECTION */}
       <section className="container py-5">
-        <h2 className="text-center fw-bold mb-2 home-title">
+        <h2 className="text-center fw-bold mb-2" style={{ color: "#0a3d3f" }}>
           Explora Nuestras Categorías
         </h2>
         <p className="text-center mb-5" style={{ color: "#6c757d" }}>
           Selecciona tu categoría favorita y encuentra la bebida perfecta
         </p>
 
-        {/* CATEGORÍAS */}
-        <div className="categorias-wrap">
-          {/* Agua */}
-          <Link to="/agua" className="categoria-item" aria-label="Agua">
-            <div className="categoria-fig">
-              <img src="/images/agua.png" alt="Agua" className="categoria-icono" />
+        <div className="row justify-content-center g-4">
+          {categorias.map((cat) => (
+            <div key={cat.nombre} className="col-6 col-md-3">
+              <Link
+                to={cat.ruta}
+                className="categoria-item text-decoration-none d-block"
+              >
+                <div className="text-center">
+                  <img
+                    src={`/images/${cat.nombre}.png`}
+                    alt={cat.nombre}
+                    className="categoria-icono"
+                  />
+                  <p className="categoria-nombre">
+                    {cat.nombre}
+                  </p>
+                </div>
+              </Link>
             </div>
-            <div className="categoria-label">Agua</div>
-          </Link>
+          ))}
 
-          {/* Jugo */}
-          <Link to="/jugo" className="categoria-item" aria-label="Jugo">
-            <div className="categoria-fig">
-              <img src="/images/jugo.png" alt="Jugo" className="categoria-icono" />
+          {/* Alcohol con modal */}
+          <div className="col-6 col-md-3">
+            <div
+              onClick={handleAlcoholClick}
+              className="categoria-item text-decoration-none d-block"
+              style={{ cursor: "pointer" }}
+            >
+              <div className="text-center">
+                <img
+                  src="/images/alcohol.png"
+                  alt="Alcohol"
+                  className="categoria-icono"
+                />
+                <p className="categoria-nombre">
+                  Alcohol
+                </p>
+              </div>
             </div>
-            <div className="categoria-label">Jugo</div>
-          </Link>
-
-          {/* Gaseosa */}
-          <Link to="/gaseosa" className="categoria-item" aria-label="Gaseosa">
-            <div className="categoria-fig">
-              <img src="/images/gaseosa.png" alt="Gaseosa" className="categoria-icono" />
-            </div>
-            <div className="categoria-label">Gaseosa</div>
-          </Link>
-
-          {/* Alcohol: MISMO MARKUP + interceptar click para modal 18+ */}
-          <a
-            href="/alcohol"
-            className="categoria-item"
-            aria-label="Alcohol"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowAgeModal(true);
-            }}
-          >
-            <div className="categoria-fig">
-              <img src="/images/alcohol.png" alt="Alcohol" className="categoria-icono" />
-            </div>
-            <div className="categoria-label">Alcohol</div>
-          </a>
+          </div>
         </div>
       </section>
 

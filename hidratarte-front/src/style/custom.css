@@ -1,14 +1,13 @@
-/* ============================================
-   HIDRATARTE - CUSTOM STYLES
-   Paleta: #0a3d3f (principal), #00b3a1 (acento)
-   Tipografía: Poppins/Nunito
+/* ============================================ HIDRATARTE - CUSTOM STYLES
+    Paleta: #0a3d3f (principal), #00b3a1 (acento)
+      Tipografía: Poppins/Nunito
    ============================================ */
 
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 /* ============================================
-   GLOBAL STYLES
+    GLOBAL STYLES
    ============================================ */
 :root {
   --color-primary: #0a3d3f;

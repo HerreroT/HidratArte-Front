@@ -10,6 +10,7 @@ const emptyForm = {
   price: "",
   stock: "",
   category: "agua",
+  image: null,
 };
 
 function AdminProducts() {
@@ -18,6 +19,7 @@ function AdminProducts() {
   const [error, setError] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   // edición rápida de stock
   const [stockId, setStockId] = useState(null);
@@ -44,28 +46,51 @@ function AdminProducts() {
 
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  const onImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm({ ...form, image: file });
+      // Crear preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const payload = {
-        name: form.name,
-        description: form.description,
-        price: parseFloat(form.price),
-        stock: parseInt(form.stock, 10),
-        category: form.category,
-      };
-      if (Number.isNaN(payload.price) || Number.isNaN(payload.stock)) {
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('description', form.description);
+      formData.append('price', parseFloat(form.price));
+      formData.append('stock', parseInt(form.stock, 10));
+      formData.append('category', form.category);
+      
+      // Solo agregar imagen si hay una nueva (usar 'image_upload' como espera el backend)
+      if (form.image) {
+        formData.append('image_upload', form.image);
+      }
+
+      if (Number.isNaN(parseFloat(form.price)) || Number.isNaN(parseInt(form.stock, 10))) {
         alert("Revisá precio/stock.");
         return;
       }
 
       if (editingId) {
-        await API.put(`${endpoint}${editingId}/`, payload);
+        await API.put(`${endpoint}${editingId}/`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
       } else {
-        await API.post(endpoint, payload);
+        await API.post(endpoint, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
       }
       setForm(emptyForm);
       setEditingId(null);
+      setImagePreview(null);
       await load();
     } catch (e) {
       console.error(e);
@@ -81,7 +106,9 @@ function AdminProducts() {
       price: p.price ?? "",
       stock: p.stock ?? "",
       category: p.category ?? "agua",
+      image: null,
     });
+    setImagePreview(p.image || null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -115,7 +142,7 @@ function AdminProducts() {
 
       {/* Formulario */}
       <form className="border rounded p-3 mb-4" onSubmit={submit}>
-        <div className="row g-2">
+        <div className="row g-3">
           <div className="col-md-3">
             <input
               className="form-control"
@@ -174,10 +201,56 @@ function AdminProducts() {
               required
             />
           </div>
-          <div className="col-md-12 col-lg-1 d-grid">
+
+          {/* Imagen */}
+          <div className="col-md-6">
+            <label className="form-label">Imagen del producto</label>
+            <input
+              className="form-control"
+              type="file"
+              accept="image/*"
+              onChange={onImageChange}
+            />
+          </div>
+
+          {/* Preview de imagen */}
+          {imagePreview && (
+            <div className="col-md-6">
+              <label className="form-label">Vista previa</label>
+              <div>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "200px",
+                    maxHeight: "200px",
+                    objectFit: "contain",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    padding: "8px"
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="col-12 d-grid">
             <button className="btn btn-primary" type="submit">
-              {editingId ? "Guardar" : "Crear"}
+              {editingId ? "Guardar Cambios" : "Crear Producto"}
             </button>
+            {editingId && (
+              <button
+                className="btn btn-secondary mt-2"
+                type="button"
+                onClick={() => {
+                  setForm(emptyForm);
+                  setEditingId(null);
+                  setImagePreview(null);
+                }}
+              >
+                Cancelar
+              </button>
+            )}
           </div>
         </div>
       </form>
@@ -191,6 +264,7 @@ function AdminProducts() {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Imagen</th>
               <th>Nombre</th>
               <th>Precio</th>
               <th>Categoría</th>
@@ -202,6 +276,22 @@ function AdminProducts() {
             {products.map((p) => (
               <tr key={p.id}>
                 <td>{p.id}</td>
+                <td>
+                  {p.image ? (
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        borderRadius: "4px"
+                      }}
+                    />
+                  ) : (
+                    <span className="text-muted">Sin imagen</span>
+                  )}
+                </td>
                 <td>{p.name}</td>
                 <td>${Number(p.price).toFixed(2)}</td>
 
@@ -274,7 +364,7 @@ function AdminProducts() {
 
             {!loading && products.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center text-muted">
+                <td colSpan={7} className="text-center text-muted">
                   Sin productos.
                 </td>
               </tr>

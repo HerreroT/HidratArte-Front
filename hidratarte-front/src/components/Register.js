@@ -6,7 +6,8 @@ import { AuthContext } from "../AuthContext";
 
 function Register() {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  // login not used here; registration redirects to login page
+  useContext(AuthContext);
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -17,14 +18,13 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("/useradmin/register/", {
+      await API.post("/useradmin/register/", {
         username,
         email,
         address,
         password,
       });
 
-      const user = res.data;
 
       // Loguear automáticamente (si querés)
       alert("Registro exitoso. Ahora podés iniciar sesión.");

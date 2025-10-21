@@ -9,14 +9,15 @@ export const CartContext = createContext();
 
 const REMOTE_ENDPOINT = "/main/model/user-product-records/";
 
-const mapRemoteRecord = (record) => {
+  const mapRemoteRecord = (record) => {
   const product = record?.product ?? {};
   return {
     id: record.id,
-    productId: product.id ?? record.product_id ?? null,
+      productId: product.id ?? record.product_id ?? null,
     name: product.name ?? record.name ?? "Producto",
-    price: Number(product.price ?? record.price ?? 0),
-    qty: Number(record.quantity ?? 0),
+      price: Number(product.price ?? record.price ?? 0),
+      // default quantity to 1 to avoid sending qty=0 to checkout
+      qty: Number(record.quantity ?? 1),
     image: product.image ?? record.image ?? "/images/default.png",
     product,
     raw: record,

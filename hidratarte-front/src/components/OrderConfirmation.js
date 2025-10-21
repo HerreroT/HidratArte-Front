@@ -59,19 +59,6 @@ function OrderConfirmation() {
 
       <Link to="/explorar" className="btn btn-outline-primary me-2">Seguir comprando</Link>
       <Link to="/orders" className="btn btn-primary">Ver mis pedidos</Link>
-      {!(order.status === 'shipped' || order.status === 'delivered' || order.status === 'cancelled') && (
-        <button className="btn btn-outline-danger ms-2" onClick={async () => {
-          if (!window.confirm('¿Seguro que querés cancelar este pedido?')) return;
-          try {
-            await API.post(`/main/model/orders/${order.id}/cancel/`);
-              window.location.reload();
-          } catch (err) {
-              console.error('Cancel error', err);
-              const serverMsg = err?.response?.data?.detail || err?.response?.data || err?.message || 'No se pudo cancelar el pedido';
-              alert(serverMsg);
-          }
-        }}>Cancelar pedido</button>
-      )}
     </div>
   );
 }

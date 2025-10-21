@@ -26,6 +26,28 @@ function AdminOrders() {
     }
   };
 
+  const handleAccept = async (id) => {
+    try {
+      await API.post(`${endpoint}${id}/accept/`);
+      alert("Pedido aceptado correctamente");
+      load();
+    } catch (e) {
+      console.error(e);
+      alert("Error al aceptar el pedido");
+    }
+  };
+
+  const handleCancel = async (id) => {
+    try {
+      await API.post(`${endpoint}${id}/cancel/`);
+      alert("Pedido cancelado correctamente");
+      load();
+    } catch (e) {
+      console.error(e);
+      alert("Error al cancelar el pedido");
+    }
+  };
+
   useEffect(() => { load(); }, []);
 
   return (
@@ -42,6 +64,7 @@ function AdminOrders() {
               <th>Usuario</th>
               <th>Fecha</th>
               <th>Total</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -51,6 +74,24 @@ function AdminOrders() {
                 <td>{o.user?.username ?? "-"}</td>
                 <td>{o.date}</td>
                 <td>${Number(o.total ?? 0).toFixed(2)}</td>
+                <td>
+                  {o.status !== "cancelled" && (
+                    <>
+                      <button
+                        className="btn btn-success btn-sm me-2"
+                        onClick={() => handleAccept(o.id)}
+                      >
+                        Aceptar
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleCancel(o.id)}
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

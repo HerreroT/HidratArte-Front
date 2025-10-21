@@ -5,7 +5,7 @@ import API from "../axiosConfig";
 import { useNavigate } from "react-router-dom";
 
 function Perfil() {
-  const { userName, userEmail, login, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const [form, setForm] = useState({ username: "", email: "", address: "" });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);

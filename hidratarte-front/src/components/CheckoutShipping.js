@@ -15,6 +15,7 @@ function CheckoutShipping() {
   const [postalCode, setPostalCode] = useState('');
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [paymentMethodLabel, setPaymentMethodLabel] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -28,15 +29,23 @@ function CheckoutShipping() {
   const handleSubmit = async () => {
     if (cartItems.length === 0) return toast.error('No hay items en el carrito');
     const shipping_address = `${street || ''} ${number || ''}`.trim() + (city ? `, ${city}` : '') + (province ? `, ${province}` : '') + (postalCode ? `, CP ${postalCode}` : '');
+    // Build items payload and filter invalid entries
+    const items = cartItems
+      .map(it => ({ product_id: it.productId || it.id, qty: Number(it.qty || 0) }))
+      .filter(i => i.product_id && i.qty > 0);
+    if (items.length === 0) {
+      return toast.error('No hay items válidos en el carrito');
+    }
     const payload = {
-      items: cartItems.map(it => ({ product_id: it.productId || it.id, qty: it.qty })),
+      items,
       shipping_address,
-      payment_method_id: selectedPayment,
+      payment_method_id: selectedPayment != null ? Number(selectedPayment) : null,
+      ...(paymentMethodLabel ? { payment_method_label: paymentMethodLabel } : {}),
     };
     try {
       setLoading(true);
       const { data } = await API.post('/main/model/checkout/', payload);
-      toast.success('Orden creada correctamente');
+  toast.success('Pedido solicitado. Queda en estado pendiente para revisión del administrador');
       // Esperar a que el carrito se vacíe en el servidor y estado local
       try {
         await clearCart();
@@ -71,19 +80,19 @@ function CheckoutShipping() {
           <h5>Método de pago</h5>
           {paymentMethods.length === 0 ? (
             <div className="d-flex gap-2">
-              <button className={`btn ${selectedPayment === 'mercadopago' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setSelectedPayment('mercadopago')}>MercadoPago</button>
-              <button className={`btn ${selectedPayment === 'debito' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setSelectedPayment('debito')}>Débito</button>
-              <button className={`btn ${selectedPayment === 'credito' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setSelectedPayment('credito')}>Crédito</button>
+              <button className={`btn ${paymentMethodLabel === 'mercadopago' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => { setSelectedPayment(null); setPaymentMethodLabel('mercadopago'); }}>MercadoPago</button>
+              <button className={`btn ${paymentMethodLabel === 'debito' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => { setSelectedPayment(null); setPaymentMethodLabel('debito'); }}>Débito</button>
+              <button className={`btn ${paymentMethodLabel === 'credito' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => { setSelectedPayment(null); setPaymentMethodLabel('credito'); }}>Crédito</button>
             </div>
           ) : (
-            <select className="form-select" value={selectedPayment || ''} onChange={(e) => setSelectedPayment(e.target.value)}>
+            <select className="form-select" value={selectedPayment || ''} onChange={(e) => { const v = e.target.value; setSelectedPayment(v ? Number(v) : null); if (v) setPaymentMethodLabel(''); }}>
               <option value=''>Seleccionar</option>
               {paymentMethods.map(pm => (<option key={pm.id} value={pm.id}>{pm.name}</option>))}
             </select>
           )}
 
           <div className="mt-4">
-            <button className="btn btn-success" disabled={loading} onClick={handleSubmit}>{loading ? 'Procesando...' : 'Pagar y crear orden'}</button>
+            <button className="btn btn-success" disabled={loading} onClick={handleSubmit}>{loading ? 'Procesando...' : 'Solicitar pedido'}</button>
           </div>
         </div>
       </div>

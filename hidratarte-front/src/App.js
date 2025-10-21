@@ -1,4 +1,5 @@
-﻿// src/App.js
+/* eslint-disable unicode-bom */
+// src/App.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,6 +18,9 @@ import Explorar from "./components/Explorar";
 import Perfil   from "./components/Perfil";
 import Login    from "./components/Login";
 import Register from "./components/Register";
+import OrderConfirmation from "./components/OrderConfirmation";
+import MyOrders from "./components/MyOrders";
+import CheckoutShipping from "./components/CheckoutShipping";
 
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
@@ -45,6 +49,16 @@ function App() {
                   <Carrito />
                 </PrivateRoute>
               } />
+              <Route path="/checkout" element={
+                <PrivateRoute>
+                  <CheckoutShipping />
+                </PrivateRoute>
+              } />
+              <Route path="/orders" element={
+                <PrivateRoute>
+                  <MyOrders />
+                </PrivateRoute>
+              } />
               <Route path="/perfil" element={
                 <PrivateRoute>
                   <Perfil />
@@ -67,6 +81,7 @@ function App() {
                   <AdminOrders />
                 </AdminRoute>
               } />
+              <Route path="/order/confirmation/:id" element={<OrderConfirmation />} />
             </Route>
 
             {/* --- Rutas sin Navbar (auth) --- */}
@@ -75,8 +90,16 @@ function App() {
           </Routes>
         </Router>
 
-        {/* Contenedor global de notificaciones */}
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+        {/* Contenedor global de notificaciones (discreto y elegante) */}
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick={true}
+          pauseOnHover={true}
+          draggable={true}
+        />
       </CartProvider>
     </AuthProvider>
   );

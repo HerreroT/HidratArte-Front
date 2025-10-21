@@ -1,4 +1,5 @@
-﻿// src/components/Navbar.js
+// src/components/Navbar.js
+/* eslint-disable unicode-bom */
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
@@ -100,6 +101,11 @@ function Navbar() {
                     className="nav-link"
                   >
                     👤 {userName}
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/orders" className="nav-link">
+                    Mis pedidos
                   </Link>
                 </li>
                 <li className="nav-item">

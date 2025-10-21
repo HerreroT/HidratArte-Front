@@ -1,0 +1,27 @@
+/* Subtle toast styling for react-toastify */
+.Toastify__toast-container {
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+.Toastify__toast {
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  box-shadow: 0 6px 18px rgba(10, 61, 63, 0.08) !important;
+  font-size: 13px !important;
+  color: #053232 !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfffe 100%) !important;
+  border: 1px solid rgba(77, 184, 168, 0.12) !important;
+}
+.Toastify__progress-bar {
+  height: 3px !important;
+  background: rgba(77, 184, 168, 0.9) !important;
+}
+/* Smaller margins on mobile */
+@media (max-width: 576px) {
+  .Toastify__toast-container--bottom-right {
+    right: 8px;
+    left: 8px;
+  }
+  .Toastify__toast {
+    font-size: 12px !important;
+  }
+}

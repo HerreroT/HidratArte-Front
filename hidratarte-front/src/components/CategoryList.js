@@ -1,8 +1,10 @@
-﻿import { useState, useEffect, useMemo, useContext } from "react";
+/* eslint-disable unicode-bom */
+import { useState, useEffect, useMemo, useContext } from "react";
 import { Spinner, Alert } from "react-bootstrap";
 import API from "../axiosConfig";
 import { CartContext } from "../CartContext";
 import "../style/custom.css";
+import { useCallback } from "react";
 
 const mapApiProduct = (product) => ({
   id: product.id,
@@ -19,6 +21,15 @@ function CategoryList({ category, title }) {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+
+  const fetchPaymentMethods = useCallback(() => {
+    let mounted = true;
+    API.get('/main/model/payment-methods/')
+      .then(res => mounted && setPaymentMethods(res.data))
+      .catch(() => {})
+    return () => (mounted = false);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -41,8 +52,9 @@ function CategoryList({ category, title }) {
       }
     };
     fetchProducts();
+    fetchPaymentMethods();
     return () => (isMounted = false);
-  }, [category]);
+  }, [category, fetchPaymentMethods]);
 
   const lista = useMemo(() => productos, [productos]);
 
@@ -123,6 +135,12 @@ function CategoryList({ category, title }) {
                   <p className="card-text fw-bold mb-3" style={{ fontSize: "1.4rem" }}>
                     ${producto.precio.toFixed(2)}
                   </p>
+                  {/* Métodos de pago disponibles (globales) */}
+                  <div className="mb-2 d-flex gap-2 flex-wrap">
+                    {paymentMethods.slice(0,3).map(pm => (
+                      <span key={pm.id} className="badge bg-light text-dark border" style={{ fontSize: '0.75rem' }}>{pm.name}</span>
+                    ))}
+                  </div>
                   <button
                     className="btn btn-primary w-100"
                     onClick={() => addToCart(producto)}

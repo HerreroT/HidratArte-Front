@@ -1,4 +1,5 @@
-﻿// src/admin/AdminProducts.js
+// src/admin/AdminProducts.js
+/* eslint-disable unicode-bom */
 import { useEffect, useState } from "react";
 import API from "../axiosConfig";
 

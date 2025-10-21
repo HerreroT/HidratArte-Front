@@ -21,6 +21,23 @@ function Home() {
   };
   const handleRechazar18 = () => setShowAgeModal(false);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = () => {
+    const q = (searchTerm || "").trim();
+    if (!q) {
+      navigate("/explorar");
+      return;
+    }
+    navigate(`/explorar?search=${encodeURIComponent(q)}`);
+  };
+
+  const handleInputKey = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <div style={{ backgroundColor: "#f9fbfc", minHeight: "calc(100vh - 200px)" }}>
       {/* HERO SECTION */}
@@ -40,8 +57,12 @@ function Home() {
               type="text"
               className="search-input"
               placeholder="Buscar bebidas, marcas o categorías..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleInputKey}
+              aria-label="Buscar"
             />
-            <button className="btn btn-primary search-btn">
+            <button className="btn btn-primary search-btn" onClick={handleSearch}>
               Buscar
             </button>
           </div>

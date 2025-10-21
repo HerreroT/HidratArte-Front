@@ -85,9 +85,7 @@ export function CartProvider({ children }) {
         });
       }
       await loadCart();
-      toast.success(`Agregado: ${product.name ?? product.nombre ?? "Producto"}`, {
-        icon: "🛒",
-      });
+      toast.success(`Agregado: ${product.name ?? product.nombre ?? "Producto"}`);
     } catch (err) {
       console.error("No se pudo agregar al carrito", err);
       toast.error("No se pudo agregar al carrito");

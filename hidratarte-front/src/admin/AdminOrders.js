@@ -1,5 +1,6 @@
-﻿// src/admin/AdminOrders.js
+// src/admin/AdminOrders.js
 import { useEffect, useState } from "react";
+/* eslint-disable unicode-bom */
 import API from "../axiosConfig";
 
 const endpoint = "/main/model/orders/";

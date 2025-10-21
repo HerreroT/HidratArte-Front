@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { useLocation } from "react-router-dom";
 import { Spinner, Alert } from "react-bootstrap";
 import API from "../axiosConfig";
 import { CartContext } from "../CartContext";
@@ -16,6 +17,7 @@ const mapApiProduct = (product) => ({
 
 function Explorar() {
   const { addToCart } = useContext(CartContext);
+  const location = useLocation();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,10 +28,26 @@ function Explorar() {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await API.get("/main/model/products/");
+        // Read search param from URL
+        const params = new URLSearchParams(location.search);
+        const q = params.get("search") || null;
+        const url = q ? `/main/model/products/?search=${encodeURIComponent(q)}` : "/main/model/products/";
+        const { data } = await API.get(url);
         if (!isMounted) return;
         const list = Array.isArray(data) ? data : data?.results ?? [];
-        setProductos(list.map(mapApiProduct));
+        let mapped = list.map(mapApiProduct);
+
+        // Client-side fallback filtering in case backend doesn't support search param
+        if (q) {
+          const lower = q.toLowerCase();
+          mapped = mapped.filter((p) =>
+            (p.nombre || "").toLowerCase().includes(lower) ||
+            (p.descripcion || "").toLowerCase().includes(lower) ||
+            (String(p.categoria || "") || "").toLowerCase().includes(lower)
+          );
+        }
+
+        setProductos(mapped);
       } catch (err) {
         if (!isMounted) return;
         console.error("No se pudieron cargar los productos", err);
@@ -41,7 +59,7 @@ function Explorar() {
     };
     fetchAllProducts();
     return () => (isMounted = false);
-  }, []);
+  }, [location.search]);
 
   return (
     <div className="container py-5" style={{ minHeight: "calc(100vh - 400px)" }}>

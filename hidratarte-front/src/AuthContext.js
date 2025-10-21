@@ -1,7 +1,8 @@
-﻿// src/AuthContext.js
+// src/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
 import API from "./axiosConfig";
 
+/* eslint-disable unicode-bom */
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {

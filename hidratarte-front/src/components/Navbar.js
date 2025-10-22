@@ -5,14 +5,12 @@ import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { CartContext } from "../CartContext";
 import "../style/custom.css";
-import useNotificationsCounter from "../hooks/useNotificationsCounter";
 
 function Navbar() {
   const { isLoggedIn, isAdmin, userName, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const totalItems = cartItems.reduce((sum, item) => sum + (item.qty ?? 0), 0);
   const navigate = useNavigate();
-  const { count: notifCount } = useNotificationsCounter(isLoggedIn);
 
   const handleLogout = () => {
     logout();
@@ -46,7 +44,7 @@ function Navbar() {
 
         {/* Contenido del navbar */}
         <div className="collapse navbar-collapse" id="navbarContent">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-3">
             <li className="nav-item">
               <Link to="/" className="nav-link">
                 Home
@@ -97,27 +95,42 @@ function Navbar() {
             {/* Usuario o Login */}
             {isLoggedIn ? (
               <>
-                <li className="nav-item">
-                  <Link
-                    to="/perfil"
-                    className="nav-link"
-                  >
-                    👤 {userName}
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/orders" className="nav-link">
-                    Mis pedidos
-                  </Link>
-                </li>
-                <li className="nav-item">
+                <li className="nav-item dropdown">
                   <button
-                    onClick={handleLogout}
-                    className="btn btn-outline-primary btn-sm"
-                    style={{ borderRadius: "20px", padding: "6px 20px" }}
+                    className="nav-link dropdown-toggle nav-user-toggle d-inline-flex align-items-center gap-1"
+                    id="userDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    type="button"
+                    style={{ textDecoration: "none" }}
                   >
-                    Cerrar sesión
+                    <span role="img" aria-label="Usuario">
+                      👤
+                    </span>
+                    {userName}
                   </button>
+                  <ul className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                    <li>
+                      <Link className="dropdown-item" to="/perfil">
+                        Ver perfil
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/orders">
+                        Mis pedidos
+                      </Link>
+                    </li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li>
+                      <button
+                        className="dropdown-item text-danger"
+                        onClick={handleLogout}
+                        type="button"
+                      >
+                        Cerrar sesión
+                      </button>
+                    </li>
+                  </ul>
                 </li>
               </>
             ) : (
@@ -133,18 +146,10 @@ function Navbar() {
               <li className="nav-item">
                 <Link to="/notificaciones" className="nav-link position-relative d-inline-flex align-items-center">
                   <img
-                    src="/icons/notification.png"
+                    src="/icons/campana.png"
                     alt="Notificaciones"
-                    className="notification-icon"
+                    style={{ height: "28px", width: "28px", objectFit: "contain" }}
                   />
-                  {notifCount > 0 && (
-                    <span
-                      className="position-absolute top-0 start-100 translate-middle badge rounded-pill"
-                      style={{ backgroundColor: "#ff7a1a" }}
-                    >
-                      {notifCount}
-                    </span>
-                  )}
                 </Link>
               </li>
             )}

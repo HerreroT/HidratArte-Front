@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../axiosConfig";
 import { Link } from "react-router-dom";
-import { normalizeOrderStatus, STATUS_BADGE, STATUS_LABEL_ES } from "../constants/orderStatus";
-import { toast } from "react-toastify";
 
 function MyOrders() {
   const [orders, setOrders] = useState([]);
@@ -25,39 +23,16 @@ function MyOrders() {
       {orders.length === 0 && <p>No tenés pedidos aún.</p>}
       <div className="list-group">
         {orders.map(o => (
-          <div key={o.id} className="list-group-item d-flex justify-content-between align-items-center">
-            <Link to={`/order/confirmation/${o.id}`} className="flex-grow-1 text-decoration-none text-dark">
+          <Link key={o.id} to={`/order/confirmation/${o.id}`} className="list-group-item list-group-item-action d-flex justify-content-between">
+            <div>
               <div>Pedido #{o.id}</div>
               <small className="text-muted">{o.date}</small>
-            </Link>
-            {(() => {
-              const norm = normalizeOrderStatus(o.status);
-              const badge = STATUS_BADGE[norm] || "secondary";
-              return (
-                <>
-                  <div className="text-end me-3">
-                    <div>${Number(o.total).toFixed(2)}</div>
-                    <span className={`badge bg-${badge}`}>{STATUS_LABEL_ES[norm]}</span>
-                  </div>
-                  {!(norm === 'SHIPPED' || norm === 'DELIVERED' || norm === 'CANCELED') && (
-                    <button className="btn btn-sm btn-outline-danger" onClick={async () => {
-                      if (!window.confirm('¿Cancelar pedido?')) return;
-                      try {
-                        await API.post(`/main/model/orders/${o.id}/cancel/`);
-                        const { data } = await API.get('/main/model/orders/mine/');
-                        setOrders(data);
-                        toast.success('Pedido cancelado');
-                      } catch (err) {
-                        console.error('Cancel error', err);
-                        const serverMsg = err?.response?.data?.detail || err?.response?.data || err?.message || 'No se pudo cancelar';
-                        toast.error(serverMsg);
-                      }
-                    }}>Cancelar</button>
-                  )}
-                </>
-              );
-            })()}
-          </div>
+            </div>
+            <div className="text-end">
+              <div>${Number(o.total).toFixed(2)}</div>
+              <small className="text-muted">{o.status}</small>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

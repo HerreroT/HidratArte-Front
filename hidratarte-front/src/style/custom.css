@@ -199,6 +199,17 @@ p {
 .nav-link:hover::after {
   width: 80%;
 }
+.nav-user-toggle {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+.nav-user-toggle:focus {
+  box-shadow: none;
+}
+.nav-user-toggle::after {
+  display: none;
+}
 
 /* ============================================
    CATEGORY ICONS

@@ -27,6 +27,7 @@ import AdminRoute from "./AdminRoute";
 import AdminDashboard from "./admin/AdminDashboard";
 import AdminProducts from "./admin/AdminProducts";
 import AdminOrders from "./admin/AdminOrders";
+import Notifications from "./components/Notifications";
 
 function App() {
   return (
@@ -62,6 +63,11 @@ function App() {
               <Route path="/perfil" element={
                 <PrivateRoute>
                   <Perfil />
+                </PrivateRoute>
+              } />
+              <Route path="/notificaciones" element={
+                <PrivateRoute>
+                  <Notifications />
                 </PrivateRoute>
               } />
 

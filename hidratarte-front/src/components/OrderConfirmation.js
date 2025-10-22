@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../axiosConfig";
 import OrderStatusTimeline from './OrderStatusTimeline';
+import { normalizeOrderStatus, STATUS_LABEL_ES } from "../constants/orderStatus";
 
 function OrderConfirmation() {
   const { id } = useParams();
@@ -24,18 +25,20 @@ function OrderConfirmation() {
   if (loading) return <div className="container py-5">Cargando...</div>;
   if (!order) return <div className="container py-5">No se encontró la orden.</div>;
 
+  const norm = normalizeOrderStatus(order.status);
   return (
     <div className="container py-5">
-      <h2 className="mb-4">✅ Pedido #{order.id} — {order.status}</h2>
+      <h2 className="mb-4">✅ Pedido #{order.id} — {STATUS_LABEL_ES[norm] || order.status}</h2>
       <OrderStatusTimeline
         steps={[
-          { key: 'confirmado', label: 'confirmado' },
-          { key: 'pago_recibido', label: 'pago recibido' },
-          { key: 'en_preparacion', label: 'en preparación' },
-          { key: 'enviado', label: 'enviado' },
+          { key: 'PENDING', label: 'pendiente' },
+          { key: 'ACCEPTED', label: 'aceptado' },
+          { key: 'PREPARING', label: 'en preparación' },
+          { key: 'SHIPPED', label: 'enviado' },
+          { key: 'DELIVERED', label: 'entregado' },
         ]}
-        activeKey={order.status}
-        timestamps={{ confirmado: order.date }}
+        activeKey={norm}
+        timestamps={{ PENDING: order.date }}
       />
       <p>Gracias por tu compra. Aquí el resumen:</p>
 

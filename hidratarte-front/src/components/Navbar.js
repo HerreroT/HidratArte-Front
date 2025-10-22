@@ -5,12 +5,14 @@ import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { CartContext } from "../CartContext";
 import "../style/custom.css";
+import useNotificationsCounter from "../hooks/useNotificationsCounter";
 
 function Navbar() {
   const { isLoggedIn, isAdmin, userName, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const totalItems = cartItems.reduce((sum, item) => sum + (item.qty ?? 0), 0);
   const navigate = useNavigate();
+  const { count: notifCount } = useNotificationsCounter(isLoggedIn);
 
   const handleLogout = () => {
     logout();
@@ -122,6 +124,27 @@ function Navbar() {
               <li className="nav-item">
                 <Link to="/login" className="btn btn-primary btn-sm">
                   Iniciar sesión
+                </Link>
+              </li>
+            )}
+
+            {/* Notificaciones */}
+            {isLoggedIn && (
+              <li className="nav-item">
+                <Link to="/notificaciones" className="nav-link position-relative d-inline-flex align-items-center">
+                  <img
+                    src="/icons/notification.png"
+                    alt="Notificaciones"
+                    className="notification-icon"
+                  />
+                  {notifCount > 0 && (
+                    <span
+                      className="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                      style={{ backgroundColor: "#ff7a1a" }}
+                    >
+                      {notifCount}
+                    </span>
+                  )}
                 </Link>
               </li>
             )}

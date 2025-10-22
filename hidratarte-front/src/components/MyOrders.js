@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import API from "../axiosConfig";
 import { Link } from "react-router-dom";
+import { normalizeOrderStatus, STATUS_BADGE, STATUS_LABEL_ES } from "../constants/orderStatus";
+import { toast } from "react-toastify";
 
 function MyOrders() {
   const [orders, setOrders] = useState([]);
@@ -28,25 +30,33 @@ function MyOrders() {
               <div>Pedido #{o.id}</div>
               <small className="text-muted">{o.date}</small>
             </Link>
-            <div className="text-end me-3">
-              <div>${Number(o.total).toFixed(2)}</div>
-              <small className="text-muted d-block">{o.status}</small>
-            </div>
-            {!(o.status === 'shipped' || o.status === 'delivered' || o.status === 'cancelled') && (
-              <button className="btn btn-sm btn-outline-danger" onClick={async () => {
-                if (!window.confirm('¿Cancelar pedido?')) return;
-                try {
-                  await API.post(`/main/model/orders/${o.id}/cancel/`);
-                  // refresh
-                  const { data } = await API.get('/main/model/orders/mine/');
-                  setOrders(data);
-                } catch (err) {
-                  console.error('Cancel error', err);
-                  const serverMsg = err?.response?.data?.detail || err?.response?.data || err?.message || 'No se pudo cancelar';
-                  alert(serverMsg);
-                }
-              }}>Cancelar</button>
-            )}
+            {(() => {
+              const norm = normalizeOrderStatus(o.status);
+              const badge = STATUS_BADGE[norm] || "secondary";
+              return (
+                <>
+                  <div className="text-end me-3">
+                    <div>${Number(o.total).toFixed(2)}</div>
+                    <span className={`badge bg-${badge}`}>{STATUS_LABEL_ES[norm]}</span>
+                  </div>
+                  {!(norm === 'SHIPPED' || norm === 'DELIVERED' || norm === 'CANCELED') && (
+                    <button className="btn btn-sm btn-outline-danger" onClick={async () => {
+                      if (!window.confirm('¿Cancelar pedido?')) return;
+                      try {
+                        await API.post(`/main/model/orders/${o.id}/cancel/`);
+                        const { data } = await API.get('/main/model/orders/mine/');
+                        setOrders(data);
+                        toast.success('Pedido cancelado');
+                      } catch (err) {
+                        console.error('Cancel error', err);
+                        const serverMsg = err?.response?.data?.detail || err?.response?.data || err?.message || 'No se pudo cancelar';
+                        toast.error(serverMsg);
+                      }
+                    }}>Cancelar</button>
+                  )}
+                </>
+              );
+            })()}
           </div>
         ))}
       </div>

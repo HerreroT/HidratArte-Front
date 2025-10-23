@@ -1,5 +1,6 @@
-// src/components/Login.js
-import React, { useState, useContext } from "react";
+﻿// src/components/Login.js
+import React, { useState, useContext, useEffect } from "react";
+import Alert from "react-bootstrap/Alert";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 
@@ -9,17 +10,47 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [dismissTimer, setDismissTimer] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      if (dismissTimer) {
+        clearTimeout(dismissTimer);
+      }
+    };
+  }, [dismissTimer]);
+
+  const clearError = () => {
+    if (errorMessage) {
+      setErrorMessage("");
+    }
+    if (dismissTimer) {
+      clearTimeout(dismissTimer);
+      setDismissTimer(null);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Usamos el login del contexto que maneja token, usuario y carrito
       await login({ username: email, password });
       navigate("/");
+      clearError();
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-      alert("Credenciales incorrectas o error del servidor");
+      const status = error?.response?.status;
+      if (status === 400 || status === 401) {
+        setErrorMessage("Incorrect email or password");
+      } else {
+        setErrorMessage("Unable to login. Please try again later.");
+      }
+      if (dismissTimer) {
+        clearTimeout(dismissTimer);
+      }
+      const timer = setTimeout(() => setErrorMessage(""), 3000);
+      setDismissTimer(timer);
     }
   };
 
@@ -27,6 +58,11 @@ function Login() {
     <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="card p-4 shadow" style={{ width: "100%", maxWidth: "400px" }}>
         <h3 className="text-center mb-4">Iniciar Sesión</h3>
+        {errorMessage && (
+          <Alert variant="danger" className="py-2">
+            {errorMessage}
+          </Alert>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Correo electrónico</label>
@@ -35,7 +71,10 @@ function Login() {
               className="form-control"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearError();
+              }}
               required
             />
           </div>
@@ -48,7 +87,10 @@ function Login() {
                 className="form-control"
                 id="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearError();
+                }}
                 required
               />
               <button

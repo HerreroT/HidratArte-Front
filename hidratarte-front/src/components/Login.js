@@ -1,4 +1,4 @@
-﻿// src/components/Login.js
+// src/components/Login.js
 import React, { useState, useContext, useEffect } from "react";
 import Alert from "react-bootstrap/Alert";
 import { Link, useNavigate } from "react-router-dom";

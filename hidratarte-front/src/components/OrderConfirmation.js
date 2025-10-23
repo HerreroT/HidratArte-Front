@@ -9,6 +9,7 @@ function OrderConfirmation() {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -52,6 +53,33 @@ function OrderConfirmation() {
     () => (order?.date ? new Date(order.date).toLocaleDateString("es-AR") : null),
     [order?.date]
   );
+  const canDownloadInvoice = norm === "ACCEPTED";
+  const handleDownloadInvoice = async () => {
+    if (!order || downloading) return;
+    try {
+      setDownloading(true);
+      const { data } = await API.get(`/main/model/orders/${order.id}/invoice.pdf`, {
+        responseType: "blob",
+      });
+      const blob = new Blob([data], { type: "application/pdf" });
+      const fileURL = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = fileURL;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.download = `invoice-${order.id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(fileURL);
+    } catch (err) {
+      console.error("No se pudo descargar la factura", err);
+      alert("No se pudo descargar la factura. Intenta nuevamente.");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const timelineSteps = useMemo(() => {
     const base = [
@@ -195,6 +223,19 @@ function OrderConfirmation() {
       <div className="d-flex flex-wrap gap-2">
         <Link to="/explorar" className="btn btn-outline-primary">Seguir comprando</Link>
         <Link to="/orders" className="btn btn-primary">Ver mis pedidos</Link>
+        <button
+          type="button"
+          onClick={handleDownloadInvoice}
+          className="btn btn-outline-secondary"
+          disabled={!canDownloadInvoice || downloading}
+          title={
+            canDownloadInvoice
+              ? "Descargar factura en PDF"
+              : "Disponible cuando el pedido esté aceptado"
+          }
+        >
+          {downloading ? "Generando..." : "Descargar factura (PDF)"}
+        </button>
       </div>
     </div>
   );

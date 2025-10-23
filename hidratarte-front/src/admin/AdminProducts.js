@@ -66,13 +66,12 @@ function AdminProducts() {
       const formData = new FormData();
       formData.append('name', form.name);
       formData.append('description', form.description);
-      formData.append('price', parseFloat(form.price));
-      formData.append('stock', parseInt(form.stock, 10));
+      formData.append('price', String(parseFloat(form.price)));
+      formData.append('stock', String(parseInt(form.stock, 10)));
       formData.append('category', form.category);
-      
-      // Solo agregar imagen si hay una nueva (usar 'image_upload' como espera el backend)
+
       if (form.image) {
-        formData.append('image_upload', form.image);
+        formData.append('image', form.image);
       }
 
       if (Number.isNaN(parseFloat(form.price)) || Number.isNaN(parseInt(form.stock, 10))) {
@@ -81,14 +80,11 @@ function AdminProducts() {
       }
 
       if (editingId) {
-        await API.put(`${endpoint}${editingId}/`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        await API.put(`${endpoint}${editingId}/`, formData);
       } else {
-        await API.post(endpoint, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        await API.post(endpoint, formData);
       }
+      alert(editingId ? 'Producto actualizado con éxito' : 'Producto creado con éxito');
       setForm(emptyForm);
       setEditingId(null);
       setImagePreview(null);

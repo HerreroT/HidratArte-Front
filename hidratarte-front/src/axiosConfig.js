@@ -1,10 +1,8 @@
 ﻿// src/axiosConfig.js
 import axios from "axios";
 
-const baseURL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
-
 const API = axios.create({
-  baseURL,
+  baseURL: process.env.REACT_APP_API_URL || "http://127.0.0.1:8000",
   headers: { "Content-Type": "application/json" },
 });
 
@@ -18,7 +16,7 @@ API.interceptors.request.use((config) => {
     url.endsWith("/api/token/refresh/");
 
   if (token && !isAuthEndpoint) {
-    config.headers.Authorization = Bearer ;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
@@ -47,7 +45,7 @@ API.interceptors.response.use(
           pending.push({ resolve, reject });
         })
           .then((newToken) => {
-            original.headers.Authorization = Bearer ;
+            original.headers.Authorization = `Bearer ${newToken}`;
             return API(original);
           })
           .catch(Promise.reject);
@@ -58,7 +56,7 @@ API.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          `${baseURL}/api/token/refresh/`,
+          `${API.defaults.baseURL}/api/token/refresh/`,
           { refresh },
           { headers: { "Content-Type": "application/json" } }
         );
@@ -67,12 +65,12 @@ API.interceptors.response.use(
         const newRefresh = data.refresh ?? refresh;
         localStorage.setItem("token", newToken);
         localStorage.setItem("refresh", newRefresh);
-        API.defaults.headers.common.Authorization = Bearer ;
+        API.defaults.headers.common.Authorization = `Bearer ${newToken}`;
 
         pending.forEach((p) => p.resolve(newToken));
         pending = [];
 
-        original.headers.Authorization = Bearer ;
+        original.headers.Authorization = `Bearer ${newToken}`;
         return API(original);
       } catch (e) {
         pending.forEach((p) => p.reject(e));

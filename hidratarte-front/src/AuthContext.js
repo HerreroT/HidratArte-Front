@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const persistSession = (user, accessToken) => {
     setIsLoggedIn(true);
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     if (!token) {
       delete API.defaults.headers.common.Authorization;
+      setLoading(false);
       return;
     }
 
@@ -70,11 +72,14 @@ export const AuthProvider = ({ children }) => {
       .catch((error) => {
         console.warn("Sesión inválida, cerrando.", error);
         logout();
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isAdmin, userName, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, isAdmin, userName, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

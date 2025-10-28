@@ -23,14 +23,21 @@ function MyOrders() {
       {orders.length === 0 && <p>No tenés pedidos aún.</p>}
       <div className="list-group">
         {orders.map(o => (
-          <Link key={o.id} to={`/order/confirmation/${o.id}`} className="list-group-item list-group-item-action d-flex justify-content-between">
-            <div>
-              <div>Pedido #{o.id}</div>
-              <small className="text-muted">{o.date}</small>
-            </div>
-            <div className="text-end">
-              <div>${Number(o.total).toFixed(2)}</div>
-              <small className="text-muted">{o.status}</small>
+          <Link 
+            key={o.id} 
+            to={`/order/confirmation/${o.id}`} 
+            className="list-group-item list-group-item-action"
+            style={{ padding: '1rem' }}
+          >
+            <div className="d-flex flex-column flex-sm-row justify-content-between gap-2">
+              <div className="flex-grow-1">
+                <div className="fw-semibold">Pedido #{o.id}</div>
+                <small className="text-muted d-block">{o.date}</small>
+              </div>
+              <div className="d-flex flex-sm-column align-items-start align-items-sm-end gap-2 gap-sm-1">
+                <div className="fw-bold" style={{ fontSize: '1.1rem' }}>${Number(o.total).toFixed(2)}</div>
+                <small className="badge bg-secondary">{o.status}</small>
+              </div>
             </div>
           </Link>
         ))}

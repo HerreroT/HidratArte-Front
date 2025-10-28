@@ -68,15 +68,19 @@ function AdminOrders() {
 
   return (
     <div className="container py-4">
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+      <div className="d-flex flex-wrap justify-content-between align-items-start align-items-sm-center mb-3 gap-2 gap-sm-3">
         <h3 className="mb-0">Pedidos</h3>
-        <div className="d-flex align-items-center gap-3">
+        <div className="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2 gap-sm-3">
           {/* Contadores por estado */}
-          {Object.entries(counts).map(([k, v]) => (
-            <span key={k} className={`badge bg-${STATUS_BADGE[k]}`}>{STATUS_LABEL_ES[k]}: {v}</span>
-          ))}
+          <div className="d-flex flex-wrap gap-1 gap-sm-2">
+            {Object.entries(counts).map(([k, v]) => (
+              <span key={k} className={`badge bg-${STATUS_BADGE[k]}`} style={{ fontSize: '0.75rem' }}>
+                {STATUS_LABEL_ES[k]}: {v}
+              </span>
+            ))}
+          </div>
           {/* Filtro */}
-          <select className="form-select form-select-sm" style={{ width: 180 }} value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <select className="form-select form-select-sm" style={{ width: '100%', maxWidth: 180 }} value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="ALL">Todos</option>
             <option value="PENDING">Pendiente</option>
             <option value="ACCEPTED">Aceptado</option>

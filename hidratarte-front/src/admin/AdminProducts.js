@@ -261,7 +261,7 @@ function AdminProducts() {
         <table className="table table-sm align-middle">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>#</th>
               <th>Imagen</th>
               <th>Nombre</th>
               <th>Precio</th>
@@ -271,9 +271,9 @@ function AdminProducts() {
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
+            {products.map((p, index) => (
               <tr key={p.id}>
-                <td>{p.id}</td>
+                <td>{index + 1}</td>
                 <td>
                   {p.image ? (
                     <img

@@ -7,20 +7,17 @@ import { AuthContext } from "./AuthContext";
 
 export const CartContext = createContext();
 
-const REMOTE_ENDPOINT = "/main/model/user-product-records/";
-
-  const mapRemoteRecord = (record) => {
-  const product = record?.product ?? {};
+const mapCartItem = (item) => {
+  const product = item?.product ?? {};
   return {
-    id: record.id,
-      productId: product.id ?? record.product_id ?? null,
-    name: product.name ?? record.name ?? "Producto",
-      price: Number(product.price ?? record.price ?? 0),
-      // default quantity to 1 to avoid sending qty=0 to checkout
-      qty: Number(record.quantity ?? 1),
-    image: product.image ?? record.image ?? "/images/default.png",
+    id: item.id,
+    productId: product.id ?? item.product_id ?? null,
+    name: item.name ?? product.name ?? "Producto",
+    price: Number(item.price ?? product.price ?? 0),
+    qty: Number(item.qty ?? 1),
+    image: item.image ?? product.image ?? "/images/default.png",
     product,
-    raw: record,
+    raw: item,
   };
 };
 
@@ -41,9 +38,9 @@ export function CartProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await API.get(REMOTE_ENDPOINT);
-      const records = Array.isArray(data) ? data : data?.results ?? [];
-      setCartItems(records.map(mapRemoteRecord));
+      const { data } = await API.get("/api/cart/");
+      const items = data?.items ?? [];
+      setCartItems(items.map(mapCartItem));
     } catch (err) {
       console.error("No se pudo obtener el carrito", err);
       setError("No se pudo obtener el carrito. Intenta nuevamente.");
@@ -73,18 +70,15 @@ export function CartProvider({ children }) {
       return;
     }
 
-    const existing = cartItems.find((item) => item.productId === productId);
     try {
-      if (existing) {
-        await API.patch(`${REMOTE_ENDPOINT}${existing.id}/`, {
-          quantity: existing.qty + 1,
-        });
-      } else {
-        await API.post(REMOTE_ENDPOINT, {
-          product_id: productId,
-          quantity: 1,
-        });
-      }
+      // El backend agrupa automáticamente con get_or_create
+      await API.post("/api/cart/items/", {
+        product_id: productId,
+        name: product.name ?? product.nombre ?? "Producto",
+        price: Number(product.price ?? product.precio ?? 0),
+        qty: 1,
+        image: product.image ?? product.imagen ?? "",
+      });
       await loadCart();
       toast.success(`Agregado: ${product.name ?? product.nombre ?? "Producto"}`);
     } catch (err) {
@@ -93,17 +87,17 @@ export function CartProvider({ children }) {
     }
   };
 
-  const decreaseFromCart = async (recordId) => {
+  const decreaseFromCart = async (itemId) => {
     if (!requireSession()) return;
-    const record = cartItems.find((item) => item.id === recordId);
-    if (!record) return;
-    const nextQty = record.qty - 1;
+    const item = cartItems.find((i) => i.id === itemId);
+    if (!item) return;
+    const nextQty = item.qty - 1;
     try {
       if (nextQty <= 0) {
-        await API.delete(`${REMOTE_ENDPOINT}${record.id}/`);
+        await API.delete(`/api/cart/items/${itemId}/`);
       } else {
-        await API.patch(`${REMOTE_ENDPOINT}${record.id}/`, {
-          quantity: nextQty,
+        await API.patch(`/api/cart/items/${itemId}/`, {
+          qty: nextQty,
         });
       }
       await loadCart();
@@ -113,12 +107,12 @@ export function CartProvider({ children }) {
     }
   };
 
-  const removeItem = async (recordId) => {
+  const removeItem = async (itemId) => {
     if (!requireSession()) return;
-    const record = cartItems.find((item) => item.id === recordId);
-    if (!record) return;
+    const item = cartItems.find((i) => i.id === itemId);
+    if (!item) return;
     try {
-      await API.delete(`${REMOTE_ENDPOINT}${record.id}/`);
+      await API.delete(`/api/cart/items/${itemId}/`);
       await loadCart();
       toast.info("Producto eliminado del carrito 🗑️");
     } catch (err) {
@@ -130,8 +124,7 @@ export function CartProvider({ children }) {
   const clearCart = async () => {
     if (!requireSession()) return;
     try {
-      const ids = cartItems.map((item) => item.id);
-      await Promise.all(ids.map((id) => API.delete(`${REMOTE_ENDPOINT}${id}/`)));
+      await API.post("/api/cart/clear/");
       await loadCart();
     } catch (err) {
       console.error("No se pudo vaciar el carrito", err);

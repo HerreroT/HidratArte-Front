@@ -71,8 +71,9 @@ function AdminProducts() {
       formData.append('category', form.category);
 
       if (form.image) {
-        formData.append('image', form.image);
-      }
+  formData.append('image_upload', form.image);
+}
+
 
       if (Number.isNaN(parseFloat(form.price)) || Number.isNaN(parseInt(form.stock, 10))) {
         alert("Revisá precio/stock.");

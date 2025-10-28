@@ -1,6 +1,7 @@
 // src/admin/AdminProducts.js
 /* eslint-disable unicode-bom */
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../axiosConfig";
 
 const endpoint = "/main/model/products/";
@@ -15,6 +16,7 @@ const emptyForm = {
 };
 
 function AdminProducts() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -136,6 +138,17 @@ function AdminProducts() {
 
   return (
     <div className="container py-4">
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="btn btn-link text-decoration-none d-inline-flex align-items-center gap-2 mb-3 p-0"
+      >
+        <span aria-hidden="true" style={{ fontSize: "1.3rem", lineHeight: 1 }}>
+          ←
+        </span>
+        <span>Volver</span>
+      </button>
+
       <h3 className="mb-3">Productos</h3>
 
       {/* Formulario */}
